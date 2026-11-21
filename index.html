@@ -363,6 +363,27 @@
       text-align: center;
     }
 
+    .music-button {
+      position: fixed;
+      z-index: 10;
+      right: 18px;
+      bottom: 18px;
+      min-width: 132px;
+      min-height: 44px;
+      border: 1px solid rgba(255, 225, 255, .66);
+      border-radius: 999px;
+      background: linear-gradient(120deg, #bd7ce2, #8046b4);
+      box-shadow: 0 8px 28px rgba(173, 100, 220, .38);
+      color: white;
+      cursor: pointer;
+      font: 700 13px/1 Arial, sans-serif;
+    }
+
+    .music-button:focus-visible {
+      outline: 3px solid white;
+      outline-offset: 4px;
+    }
+
     .floating-heart {
       position: fixed;
       z-index: 5;
@@ -446,6 +467,13 @@
 <body>
   <div class="stars" aria-hidden="true"></div>
 
+  <audio id="birthday-music" loop preload="metadata">
+    <source src="photos/birthday-song.mpeg" type="audio/mpeg">
+  </audio>
+  <button class="music-button" id="music-button" type="button" aria-label="Play birthday music">
+    🎵 Play music
+  </button>
+
   <main>
     <section class="hero page-width" aria-labelledby="welcome-title">
       <div>
@@ -522,6 +550,24 @@
     const giftButton = document.getElementById("gift-button");
     const giftInstruction = document.getElementById("gift-instruction");
     const birthdayLetter = document.getElementById("birthday-letter");
+    const birthdayMusic = document.getElementById("birthday-music");
+    const musicButton = document.getElementById("music-button");
+
+    musicButton.addEventListener("click", async () => {
+      if (birthdayMusic.paused) {
+        try {
+          await birthdayMusic.play();
+          musicButton.textContent = "⏸ Pause music";
+          musicButton.setAttribute("aria-label", "Pause birthday music");
+        } catch (error) {
+          musicButton.textContent = "🎵 Tap to play";
+        }
+      } else {
+        birthdayMusic.pause();
+        musicButton.textContent = "🎵 Play music";
+        musicButton.setAttribute("aria-label", "Play birthday music");
+      }
+    });
 
     giftButton.addEventListener("click", () => {
       const isOpen = giftButton.getAttribute("aria-expanded") === "true";
@@ -531,6 +577,14 @@
       giftButton.setAttribute("aria-expanded", "true");
       giftInstruction.textContent = "Your birthday wish is here 💜";
       birthdayLetter.hidden = false;
+      if (birthdayMusic.paused) {
+        birthdayMusic.play().then(() => {
+          musicButton.textContent = "⏸ Pause music";
+          musicButton.setAttribute("aria-label", "Pause birthday music");
+        }).catch(() => {
+          musicButton.textContent = "🎵 Play music";
+        });
+      }
       releaseHearts();
     });
 
