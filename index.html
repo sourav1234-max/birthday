@@ -369,38 +369,6 @@
       object-position: center 32%;
     }
 
-    .video-moment {
-      position: relative;
-      width: min(820px, calc(100% - 40px));
-      margin: 0 auto;
-      padding: 14px;
-      border: 1px solid rgba(239, 205, 255, .52);
-      border-radius: 30px;
-      background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(173, 104, 214, .08));
-      box-shadow: 0 30px 90px rgba(125, 67, 164, .34);
-      transform: perspective(1100px) rotateX(2deg);
-    }
-
-    .video-moment::before {
-      position: absolute;
-      z-index: -1;
-      inset: 12px -18px -20px;
-      border-radius: 32px;
-      background: linear-gradient(135deg, rgba(205, 137, 245, .24), rgba(92, 46, 128, .12));
-      content: "";
-      filter: blur(18px);
-      transform: translateZ(-40px);
-    }
-
-    .video-moment video {
-      display: block;
-      width: 100%;
-      max-height: 520px;
-      border-radius: 20px;
-      background: #160d20;
-      object-fit: contain;
-    }
-
     .closing {
       width: min(760px, calc(100% - 40px));
       margin: 0 auto 85px;
@@ -601,17 +569,6 @@
             <img src="photos/birthday-portrait.jpeg" alt="Sourav in a white shirt, ready to celebrate" loading="lazy">
           </figure>
         </div>
-      </div>
-    </section>
-
-    <section class="section" aria-labelledby="video-title">
-      <p class="eyebrow">A moment worth replaying</p>
-      <h2 class="section-heading" id="video-title">Special memory in 3D ✨</h2>
-      <p class="section-intro" style="margin-bottom: 38px;">One more memory from today, moving in full color.</p>
-      <div class="video-moment">
-        <video src="photos/birthday-moment.mp4" controls playsinline preload="metadata"
-               poster="photos/birthday-portrait.jpeg"
-               aria-label="A special birthday memory video"></video>
       </div>
     </section>
 
