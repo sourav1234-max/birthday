@@ -2,23 +2,54 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#170d29">
-  <meta name="description" content="A little birthday surprise made just for Sourav.">
-  <title>Happy Birthday, Sourav! 💜</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5">
+  <meta name="theme-color" content="#0b0614">
+  <meta name="description" content="A spectacular 3D birthday celebration surprise made with love for Sourav! 🎂✨">
+  <title>Happy Birthday, Sourav! 🎂✨ | A Magical 3D Celebration</title>
+
+  <!-- Google Fonts for Luxury Festive Elegance -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800;900&family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,600;0,800;1,400;1,600&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+
+  <!-- Local Libraries with CDN Fallback -->
+  <script src="js/three.min.js"></script>
+  <script>if (typeof THREE === 'undefined') document.write('<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"><\/script>');</script>
+  <script src="js/OrbitControls.js"></script>
+  <script>if (typeof THREE !== 'undefined' && typeof THREE.OrbitControls === 'undefined') document.write('<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"><\/script>');</script>
+  <script src="js/confetti.min.js"></script>
+  <script>if (typeof confetti === 'undefined') document.write('<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"><\/script>');</script>
+
   <style>
     :root {
       color-scheme: dark;
-      --ink: #fff8ff;
-      --muted: #d7c6e4;
-      --pink: #f5b5e8;
-      --purple: #c99af9;
-      --deep: #170d29;
-      --panel: rgba(37, 22, 57, .76);
+      --bg-dark: #0b0614;
+      --bg-card: rgba(25, 14, 44, 0.72);
+      --bg-card-solid: #1b102e;
+      --ink: #fff7ff;
+      --muted: #d9c8e8;
+      --purple: #b97ff6;
+      --purple-deep: #54208a;
+      --pink: #ff7ebb;
+      --pink-glow: rgba(255, 126, 187, 0.4);
+      --gold: #ffcf56;
+      --gold-bright: #ffe685;
+      --gold-glow: rgba(255, 207, 86, 0.5);
+      --border-glass: rgba(255, 255, 255, 0.15);
+      --border-gold: rgba(255, 207, 86, 0.35);
+      --radius-xl: 28px;
+      --radius-lg: 18px;
+      --radius-md: 12px;
+      --font-display: 'Cinzel', 'Playfair Display', Georgia, serif;
+      --font-serif: 'Playfair Display', Georgia, serif;
+      --font-body: 'Outfit', system-ui, -apple-system, sans-serif;
+      --font-handwriting: 'Caveat', cursive, sans-serif;
     }
 
     * {
       box-sizing: border-box;
+      margin: 0;
+      padding: 0;
     }
 
     html {
@@ -27,644 +58,2680 @@
 
     body {
       min-width: 320px;
-      margin: 0;
       overflow-x: hidden;
-      background:
-        radial-gradient(ellipse at 82% 18%, rgba(147, 85, 191, .24), transparent 34rem),
-        radial-gradient(ellipse at 5% 62%, rgba(88, 52, 141, .25), transparent 36rem),
-        linear-gradient(145deg, #170d29, #241237 55%, #130b20);
-      color: var(--ink);
-      font-family: Georgia, "Times New Roman", serif;
-    }
-
-    button {
-      font: inherit;
-    }
-
-    .stars {
-      position: fixed;
-      z-index: -1;
-      inset: 0;
-      pointer-events: none;
-      opacity: .38;
+      background-color: var(--bg-dark);
       background-image:
-        radial-gradient(#fff 1px, transparent 1.5px),
-        radial-gradient(#e9b7ff 1px, transparent 1.5px);
-      background-size: 77px 77px, 113px 113px;
-      background-position: 0 0, 37px 52px;
+        radial-gradient(circle at 15% 15%, rgba(135, 60, 200, 0.22) 0%, transparent 45%),
+        radial-gradient(circle at 85% 35%, rgba(255, 110, 180, 0.18) 0%, transparent 40%),
+        radial-gradient(circle at 50% 80%, rgba(85, 30, 160, 0.25) 0%, transparent 55%),
+        linear-gradient(180deg, #0b0614 0%, #150926 40%, #0d0619 100%);
+      color: var(--ink);
+      font-family: var(--font-body);
+      line-height: 1.6;
+      user-select: none;
+      -webkit-font-smoothing: antialiased;
     }
 
-    .page-width {
-      width: min(1100px, calc(100% - 40px));
-      margin-inline: auto;
+    /* Ambient Dynamic Canvas */
+    #ambient-canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 0;
     }
 
-    .hero {
-      display: grid;
-      min-height: min(850px, 100svh);
-      grid-template-columns: 1.1fr .9fr;
+    /* Floating Navigation Pill */
+    .nav-header {
+      position: fixed;
+      top: 18px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      display: flex;
       align-items: center;
-      gap: clamp(32px, 7vw, 90px);
-      padding-block: 70px;
-    }
-
-    .eyebrow {
-      color: var(--pink);
-      font: 700 11px/1.5 Arial, sans-serif;
-      letter-spacing: .3em;
-      text-transform: uppercase;
-    }
-
-    h1, h2, p {
-      margin-top: 0;
-    }
-
-    .hero h1 {
-      margin: 18px 0;
-      color: #ffe2ff;
-      font-size: clamp(3.2rem, 8vw, 6.7rem);
-      line-height: .96;
-      letter-spacing: -.055em;
-      text-shadow: 0 0 35px rgba(220, 159, 255, .48);
-    }
-
-    .hero h1 span {
-      display: block;
-      color: var(--pink);
-    }
-
-    .hero-copy {
-      max-width: 520px;
-      color: var(--muted);
-      font-size: clamp(1.05rem, 2vw, 1.25rem);
-      line-height: 1.8;
-    }
-
-    .button {
-      display: inline-flex;
-      min-height: 52px;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      margin-top: 16px;
-      padding: 13px 24px;
-      border: 1px solid rgba(255, 225, 255, .66);
+      gap: 12px;
+      padding: 8px 18px;
+      background: rgba(26, 14, 46, 0.68);
+      backdrop-filter: blur(18px);
+      -webkit-backdrop-filter: blur(18px);
+      border: 1px solid var(--border-gold);
       border-radius: 999px;
-      background: linear-gradient(120deg, #bd7ce2, #8046b4);
-      box-shadow: 0 8px 30px rgba(173, 100, 220, .28);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4), 0 0 20px rgba(255, 207, 86, 0.15);
+      transition: all 0.3s ease;
+      max-width: calc(100% - 32px);
+    }
+
+    .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: var(--font-display);
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: var(--gold-bright);
+      letter-spacing: 0.05em;
+      white-space: nowrap;
+      text-decoration: none;
+    }
+
+    .nav-brand span {
+      display: inline-block;
+      animation: pulse-badge 2s infinite ease-in-out;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--muted);
+      text-decoration: none;
+      font-size: 0.82rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: 999px;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .nav-links a:hover {
+      color: #fff;
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .nav-btn-music {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      border: 1px solid rgba(255, 255, 255, 0.3);
       color: white;
+      font-size: 0.78rem;
+      font-weight: 600;
+      padding: 6px 14px;
+      border-radius: 999px;
       cursor: pointer;
-      font: 700 14px/1 Arial, sans-serif;
-      transition: transform .2s ease, box-shadow .2s ease;
+      box-shadow: 0 4px 15px rgba(236, 72, 153, 0.3);
+      transition: all 0.25s ease;
     }
 
-    .button:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 12px 35px rgba(202, 141, 242, .43);
+    .nav-btn-music:hover {
+      transform: scale(1.04);
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.5);
     }
 
-    .button:focus-visible {
-      outline: 3px solid white;
-      outline-offset: 4px;
-    }
-
-    .hero-photo-wrap {
+    /* General Layout */
+    .page-width {
+      width: min(1200px, calc(100% - 44px));
+      margin-inline: auto;
       position: relative;
-      width: min(100%, 390px);
-      justify-self: center;
-      padding: 12px;
-      border: 1px solid rgba(247, 211, 255, .58);
-      border-radius: 48% 48% 28px 28px;
-      background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(214,157,255,.05));
-      box-shadow: 0 20px 90px rgba(165, 92, 207, .27);
-      transform: rotate(2deg);
-      transform-style: preserve-3d;
-      will-change: transform;
-      transition: transform .12s ease-out;
-    }
-
-    .hero-photo-wrap::before,
-    .hero-photo-wrap::after {
-      position: absolute;
-      z-index: -1;
-      content: "";
-      border-radius: inherit;
-    }
-
-    .hero-photo-wrap::before {
-      inset: -18px;
-      border: 1px solid rgba(237, 184, 255, .25);
-      transform: translateZ(-35px) rotate(-4deg);
-    }
-
-    .hero-photo-wrap::after {
-      inset: 18% -34px -30px;
-      background: radial-gradient(ellipse, rgba(186, 111, 227, .36), transparent 68%);
-      filter: blur(12px);
-    }
-
-    .hero-photo {
-      display: block;
-      width: 100%;
-      height: clamp(360px, 58vw, 555px);
-      border-radius: 48% 48% 20px 20px;
-      object-fit: cover;
-      object-position: center 30%;
-    }
-
-    .photo-note {
-      position: absolute;
-      right: -24px;
-      bottom: 32px;
-      padding: 13px 17px;
-      border: 1px solid rgba(255,255,255,.2);
-      border-radius: 14px;
-      background: rgba(38, 21, 54, .9);
-      color: #f7ddff;
-      font-size: 15px;
-      box-shadow: 0 8px 30px rgba(0,0,0,.24);
-      transform: rotate(-4deg);
+      z-index: 1;
     }
 
     .section {
-      padding-block: clamp(70px, 10vw, 120px);
-      text-align: center;
-    }
-
-    .section-heading {
-      margin-bottom: 12px;
-      color: #ffe3ff;
-      font-size: clamp(2rem, 5vw, 3.25rem);
-      letter-spacing: -.035em;
-    }
-
-    .section-intro {
-      max-width: 580px;
-      margin: 0 auto;
-      color: var(--muted);
-      font-size: 1.05rem;
-      line-height: 1.8;
-    }
-
-    .gift-card {
-      width: min(590px, 100%);
-      margin: 42px auto 0;
-      padding: clamp(26px, 6vw, 50px);
-      border: 1px solid rgba(232, 191, 255, .3);
-      border-radius: 26px;
-      background: var(--panel);
-      box-shadow: 0 18px 70px rgba(0,0,0,.22);
-    }
-
-    .gift-wrap {
-      display: grid;
-      width: 180px;
-      height: 165px;
-      place-items: end center;
-      margin: 0 auto 20px;
-      cursor: pointer;
-      perspective: 700px;
-    }
-
-    .gift {
+      padding-block: clamp(60px, 9vw, 110px);
       position: relative;
-      width: 142px;
-      height: 100px;
-      border-radius: 5px 5px 12px 12px;
-      background: linear-gradient(135deg, #be75e4, #7737a2);
-      box-shadow: 0 14px 35px rgba(160, 81, 206, .32);
-    }
-
-    .gift::before {
-      position: absolute;
-      inset: 0 auto 0 56px;
-      width: 29px;
-      background: #ffe4ad;
-      content: "";
-    }
-
-    .gift-lid {
-      position: absolute;
       z-index: 1;
-      top: -19px;
-      left: -9px;
-      width: 160px;
-      height: 30px;
-      border-radius: 7px;
-      background: linear-gradient(135deg, #e0a1f5, #b86fda);
-      transform-origin: 12px 26px;
-      transition: transform .75s cubic-bezier(.2,.8,.2,1);
     }
 
-    .gift-lid::before,
-    .gift-lid::after {
-      position: absolute;
-      top: -26px;
-      width: 32px;
-      height: 25px;
-      border: 7px solid #ffe4ad;
-      border-radius: 50% 50% 5px 50%;
-      content: "";
+    .section-header {
+      text-align: center;
+      max-width: 680px;
+      margin: 0 auto clamp(35px, 6vw, 55px);
     }
 
-    .gift-lid::before {
-      left: 54px;
-      transform: rotate(28deg);
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--gold);
+      margin-bottom: 12px;
+      background: rgba(255, 207, 86, 0.12);
+      padding: 6px 16px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 207, 86, 0.25);
     }
 
-    .gift-lid::after {
-      left: 76px;
-      border-radius: 50% 50% 50% 5px;
-      transform: rotate(-28deg);
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.2rem, 5.5vw, 3.8rem);
+      font-weight: 800;
+      line-height: 1.12;
+      letter-spacing: -0.02em;
+      margin-bottom: 14px;
+      background: linear-gradient(135deg, #fff7ff 20%, var(--gold-bright) 60%, var(--pink) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      text-shadow: 0 0 30px rgba(245, 181, 232, 0.25);
     }
 
-    .gift-wrap.is-open .gift-lid {
-      transform: rotate(-115deg) translate(-15px, -20px);
-    }
-
-    .gift-instruction {
-      margin: 0;
+    .section-subtitle {
       color: var(--muted);
-      font-size: .95rem;
+      font-size: clamp(1rem, 2vw, 1.15rem);
+      line-height: 1.7;
     }
 
-    .letter {
-      margin-top: 30px;
-      padding: 25px;
-      border: 1px solid rgba(239, 205, 255, .3);
-      border-radius: 18px;
-      background: rgba(238, 210, 255, .07);
-      text-align: left;
-      animation: reveal .7s ease both;
+    /* Buttons */
+    .btn-glow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 14px 28px;
+      border-radius: 999px;
+      font-weight: 700;
+      font-size: 0.95rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      overflow: hidden;
     }
 
-    .letter h3 {
-      margin: 0 0 14px;
-      color: var(--pink);
-      font-size: 1.55rem;
+    .btn-glow-primary {
+      background: linear-gradient(135deg, #b862f2 0%, #7c2ae8 50%, #d946ef 100%);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 10px 30px rgba(184, 98, 242, 0.38), inset 0 1px 1px rgba(255, 255, 255, 0.6);
     }
 
-    .letter p {
-      margin: 0;
-      color: #eee0f5;
-      line-height: 1.9;
+    .btn-glow-primary:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 14px 40px rgba(217, 70, 239, 0.55), inset 0 1px 2px rgba(255, 255, 255, 0.8);
     }
 
-    [hidden] {
-      display: none !important;
+    .btn-glow-gold {
+      background: linear-gradient(135deg, #ffc837 0%, #e68a00 100%);
+      color: #1a082e;
+      border: 1px solid rgba(255, 255, 255, 0.6);
+      box-shadow: 0 10px 30px rgba(255, 200, 55, 0.38);
+      font-weight: 800;
     }
 
-    @keyframes reveal {
-      from { opacity: 0; transform: translateY(14px); }
-      to { opacity: 1; transform: translateY(0); }
+    .btn-glow-gold:hover {
+      transform: translateY(-3px) scale(1.02);
+      box-shadow: 0 14px 40px rgba(255, 200, 55, 0.6);
     }
 
-    .memories {
-      background: linear-gradient(180deg, transparent, rgba(255,255,255,.025), transparent);
+    .btn-glow-outline {
+      background: rgba(255, 255, 255, 0.06);
+      color: var(--ink);
+      border: 1px solid var(--border-glass);
+      backdrop-filter: blur(10px);
     }
 
-    .gallery {
+    .btn-glow-outline:hover {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--gold);
+      transform: translateY(-2px);
+    }
+
+    /* HERO SECTION */
+    .hero {
+      min-height: 100svh;
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: clamp(14px, 3vw, 28px);
-      margin-top: 38px;
+      grid-template-columns: 1.1fr 0.9fr;
+      align-items: center;
+      gap: clamp(35px, 6vw, 80px);
+      padding-top: 100px;
+      padding-bottom: 60px;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+    }
+
+    .hero-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 7px 18px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(184, 98, 242, 0.2), rgba(255, 207, 86, 0.2));
+      border: 1px solid var(--border-gold);
+      color: var(--gold-bright);
+      font-size: 0.85rem;
+      font-weight: 600;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 22px;
+      box-shadow: 0 0 25px rgba(255, 207, 86, 0.18);
+    }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 7.5vw, 6.2rem);
+      font-weight: 900;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      margin-bottom: 20px;
+      color: #fff;
+    }
+
+    .hero-title .name-gradient {
+      display: block;
+      background: linear-gradient(135deg, #ff9ff3 0%, #feca57 50%, #ff6b6b 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: drop-shadow(0 0 35px rgba(254, 202, 87, 0.45));
+    }
+
+    .hero-subtitle {
+      font-size: clamp(1.05rem, 1.8vw, 1.25rem);
+      color: var(--muted);
+      line-height: 1.8;
+      margin-bottom: 30px;
+      max-width: 540px;
+    }
+
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 35px;
+    }
+
+    .hero-features {
+      display: flex;
+      gap: 20px;
+      flex-wrap: wrap;
+    }
+
+    .hero-feat-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      color: var(--muted);
+    }
+
+    .hero-feat-item span {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      background: rgba(255, 207, 86, 0.15);
+      color: var(--gold);
+      font-size: 0.75rem;
+    }
+
+    /* HERO 3D PICTURE FRAME */
+    .hero-frame-container {
+      position: relative;
+      width: min(100%, 420px);
+      margin: 0 auto;
       perspective: 1200px;
     }
 
-    .memory {
-      overflow: hidden;
-      min-height: 260px;
-      margin: 0;
-      border: 1px solid rgba(226, 179, 255, .45);
-      border-radius: 18px;
-      background: #291a39;
-      box-shadow: 0 12px 36px rgba(0,0,0,.2);
+    /* Floating celebratory stickers around the hero frame */
+    .hero-floating-badge {
+      position: absolute;
+      z-index: 10;
+      padding: 10px 18px;
+      border-radius: 14px;
+      background: rgba(20, 10, 36, 0.88);
+      border: 1px solid var(--border-gold);
+      backdrop-filter: blur(14px);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+      color: #fff;
+      font-weight: 700;
+      font-size: 0.85rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      animation: float-slow 4s infinite ease-in-out;
+    }
+
+    .badge-top-right {
+      top: -15px;
+      right: -20px;
+      animation-delay: -1s;
+    }
+
+    .badge-bottom-left {
+      bottom: -15px;
+      left: -20px;
+      animation-delay: -2.5s;
+    }
+
+    /* 3D Gilded Frame Element */
+    .luxury-3d-frame {
+      position: relative;
+      width: 100%;
+      padding: 16px;
+      border-radius: 36px;
+      background: linear-gradient(135deg, rgba(255, 215, 0, 0.4) 0%, rgba(138, 43, 226, 0.3) 50%, rgba(255, 105, 180, 0.35) 100%);
+      box-shadow:
+        0 25px 60px rgba(0, 0, 0, 0.65),
+        0 0 50px rgba(184, 98, 242, 0.35),
+        inset 0 0 20px rgba(255, 215, 0, 0.3);
+      border: 2px solid rgba(255, 225, 130, 0.7);
       transform-style: preserve-3d;
+      transition: transform 0.15s ease-out, box-shadow 0.3s ease;
+      cursor: grab;
       will-change: transform;
-      transition: transform .18s ease-out, box-shadow .25s ease;
     }
 
-    .memory:nth-child(1) { transform: rotateY(7deg) rotateX(-2deg) translateZ(0); }
-    .memory:nth-child(2) { transform: translateY(-12px) translateZ(24px); }
-    .memory:nth-child(3) { transform: rotateY(-7deg) rotateX(-2deg) translateZ(0); }
-
-    .memory.is-tilting {
-      box-shadow: 0 24px 55px rgba(119, 63, 168, .42);
+    .luxury-3d-frame:active {
+      cursor: grabbing;
     }
 
-    .memory img {
+    .frame-inner-matting {
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      background: #110720;
+      border: 6px solid #200f39;
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8);
+      transform: translateZ(10px);
+    }
+
+    .frame-image {
       display: block;
       width: 100%;
-      height: 100%;
-      min-height: 260px;
+      height: clamp(380px, 55vw, 540px);
       object-fit: cover;
-      transition: transform .45s ease;
+      object-position: center 25%;
+      border-radius: 20px;
+      transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    .memory:hover img {
-      transform: scale(1.045);
+    .luxury-3d-frame:hover .frame-image {
+      transform: scale(1.04);
     }
 
-    .memory:first-child img {
-      object-position: center 32%;
+    /* Glass Glare Overlay */
+    .frame-glare {
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      pointer-events: none;
+      background: linear-gradient(125deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0.05) 30%, transparent 60%);
+      transform: translateZ(25px);
+      mix-blend-mode: overlay;
     }
 
-    .closing {
-      width: min(760px, calc(100% - 40px));
-      margin: 0 auto 85px;
-      padding: clamp(30px, 6vw, 58px);
-      border: 1px solid rgba(232, 191, 255, .32);
-      border-radius: 28px;
-      background: linear-gradient(140deg, rgba(151, 92, 193, .18), rgba(255,255,255,.04));
+    /* Golden Corner Ornaments */
+    .corner-pin {
+      position: absolute;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #fff7d6 0%, #e6a100 100%);
+      box-shadow: 0 0 8px rgba(255, 215, 0, 0.9);
+      z-index: 15;
+    }
+    .pin-tl { top: 8px; left: 8px; }
+    .pin-tr { top: 8px; right: 8px; }
+    .pin-bl { bottom: 8px; left: 8px; }
+    .pin-br { bottom: 8px; right: 8px; }
+
+    /* Engraved Nameplate Plaque */
+    .frame-plaque {
+      position: absolute;
+      bottom: -18px;
+      left: 50%;
+      transform: translateX(-50%) translateZ(30px);
+      z-index: 20;
+      background: linear-gradient(180deg, #ffde7a 0%, #c48c1e 100%);
+      color: #1b0a2e;
+      padding: 6px 20px;
+      border-radius: 8px;
+      font-family: var(--font-display);
+      font-size: 0.85rem;
+      font-weight: 800;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.6), inset 0 1px 1px #fff;
+      border: 1px solid #ffe8a3;
+      white-space: nowrap;
+    }
+
+    /* SECTION 2: 3D PHOTO GALLERY & CAROUSEL ("Sourav's 3D Memory Lane") */
+    .gallery-section {
+      background: linear-gradient(180deg, transparent 0%, rgba(30, 14, 55, 0.4) 50%, transparent 100%);
+      padding-top: 80px;
+      padding-bottom: 100px;
+      overflow: hidden;
+    }
+
+    /* Mode Switcher Tabs */
+    .mode-switcher {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 45px;
+      flex-wrap: wrap;
+    }
+
+    .mode-tab-btn {
+      padding: 10px 22px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-glass);
+      color: var(--muted);
+      font-size: 0.88rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.25s ease;
+    }
+
+    .mode-tab-btn.is-active,
+    .mode-tab-btn:hover {
+      background: linear-gradient(135deg, rgba(184, 98, 242, 0.3), rgba(255, 207, 86, 0.25));
+      border-color: var(--gold);
+      color: #fff;
+      box-shadow: 0 0 20px rgba(255, 207, 86, 0.2);
+    }
+
+    /* VIEW 1: 3D CYLINDRICAL CAROUSEL */
+    .carousel-3d-wrapper {
+      position: relative;
+      height: 520px;
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+      perspective: 1400px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .carousel-3d-stage {
+      position: absolute;
+      width: 270px;
+      height: 380px;
+      transform-style: preserve-3d;
+      transition: transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+      will-change: transform;
+    }
+
+    .carousel-3d-stage.is-dragging {
+      transition: none !important;
+    }
+
+    /* 3D Frame Cards inside Carousel */
+    .frame-card-3d {
+      position: absolute;
+      inset: 0;
+      border-radius: 22px;
+      padding: 12px;
+      background: linear-gradient(145deg, #2b1347, #130722);
+      border: 3px solid #ffcf56;
+      box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.7),
+        0 0 25px rgba(184, 98, 242, 0.4),
+        inset 0 0 15px rgba(255, 207, 86, 0.2);
+      transform-style: preserve-3d;
+      cursor: pointer;
+      user-select: none;
+      transition: box-shadow 0.3s ease, border-color 0.3s ease;
+    }
+
+    .frame-card-3d:hover {
+      border-color: #fff;
+      box-shadow:
+        0 20px 55px rgba(0, 0, 0, 0.8),
+        0 0 40px rgba(255, 207, 86, 0.6);
+    }
+
+    .frame-card-image-wrap {
+      width: 100%;
+      height: calc(100% - 44px);
+      border-radius: 14px;
+      overflow: hidden;
+      position: relative;
+      background: #000;
+    }
+
+    .frame-card-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .frame-card-3d:hover .frame-card-image {
+      transform: scale(1.06);
+    }
+
+    .frame-card-info {
+      height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-top: 8px;
+    }
+
+    .frame-card-title {
+      font-family: var(--font-display);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold-bright);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .frame-card-btn {
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #fff;
+      font-size: 0.72rem;
+      padding: 4px 9px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    /* Carousel 3D Controls */
+    .carousel-controls {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 18px;
+      margin-top: 25px;
+    }
+
+    .carousel-nav-btn {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: rgba(30, 15, 52, 0.8);
+      border: 1px solid var(--border-gold);
+      color: var(--gold-bright);
+      font-size: 1.25rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(10px);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      transition: all 0.25s ease;
+    }
+
+    .carousel-nav-btn:hover {
+      background: var(--gold);
+      color: #1a082e;
+      transform: scale(1.1);
+      box-shadow: 0 10px 30px rgba(255, 207, 86, 0.4);
+    }
+
+    .carousel-indicators {
+      display: flex;
+      gap: 8px;
+    }
+
+    .carousel-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.2);
+      border: 1px solid var(--border-glass);
+      cursor: pointer;
+      transition: all 0.25s ease;
+    }
+
+    .carousel-dot.is-active {
+      width: 28px;
+      border-radius: 999px;
+      background: var(--gold);
+      border-color: var(--gold-bright);
+      box-shadow: 0 0 10px rgba(255, 207, 86, 0.5);
+    }
+
+    .carousel-hint {
+      text-align: center;
+      font-size: 0.85rem;
+      color: var(--muted);
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* VIEW 2: 3D FLOATING CUBE */
+    .cube-3d-wrapper {
+      display: none;
+      height: 520px;
+      align-items: center;
+      justify-content: center;
+      perspective: 1200px;
+      position: relative;
+    }
+
+    .cube-3d {
+      width: 280px;
+      height: 280px;
+      position: relative;
+      transform-style: preserve-3d;
+      transform: rotateX(-15deg) rotateY(25deg);
+      transition: transform 0.1s ease-out;
+      cursor: grab;
+      will-change: transform;
+    }
+
+    .cube-3d:active {
+      cursor: grabbing;
+    }
+
+    .cube-face {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      background: #190a2c;
+      border: 4px solid var(--gold);
+      border-radius: 18px;
+      overflow: hidden;
+      box-shadow: inset 0 0 25px rgba(0, 0, 0, 0.8), 0 0 30px rgba(184, 98, 242, 0.35);
+      transform-style: preserve-3d;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .cube-face img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .cube-face-front  { transform: rotateY(0deg) translateZ(140px); }
+    .cube-face-back   { transform: rotateY(180deg) translateZ(140px); }
+    .cube-face-right  { transform: rotateY(90deg) translateZ(140px); }
+    .cube-face-left   { transform: rotateY(-90deg) translateZ(140px); }
+    .cube-face-top    {
+      transform: rotateX(90deg) translateZ(140px);
+      background: linear-gradient(135deg, #7c2ae8, #ff6b8b);
+      color: #fff;
+      font-family: var(--font-display);
+      text-align: center;
+      padding: 20px;
+    }
+    .cube-face-bottom {
+      transform: rotateX(-90deg) translateZ(140px);
+      background: #090312;
+      box-shadow: 0 0 60px rgba(255, 207, 86, 0.5);
+    }
+
+    /* VIEW 3: 3D WALL GALLERY (Interactive Hover Tilt) */
+    .wall-3d-wrapper {
+      display: none;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 25px;
+      perspective: 1200px;
+    }
+
+    .wall-card-3d {
+      border-radius: 24px;
+      padding: 14px;
+      background: var(--bg-card);
+      border: 2px solid var(--border-gold);
+      box-shadow: 0 15px 40px rgba(0, 0, 0, 0.45);
+      transform-style: preserve-3d;
+      transition: transform 0.18s ease-out, box-shadow 0.25s ease;
+      cursor: pointer;
+    }
+
+    .wall-card-3d:hover {
+      box-shadow: 0 25px 65px rgba(184, 98, 242, 0.45);
+    }
+
+    .wall-card-img-wrap {
+      width: 100%;
+      height: 320px;
+      border-radius: 16px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+    }
+
+    .wall-card-img-wrap img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.45s ease;
+    }
+
+    .wall-card-3d:hover .wall-card-img-wrap img {
+      transform: scale(1.05);
+    }
+
+    .wall-card-caption {
+      margin-top: 14px;
+      padding-inline: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    /* SECTION 3: INTERACTIVE 3D BIRTHDAY STAGE (Three.js Cake & Balloons) */
+    .stage-section {
+      position: relative;
+      padding-block: 80px 100px;
+    }
+
+    .stage-card {
+      background: rgba(22, 11, 40, 0.7);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border: 1px solid var(--border-gold);
+      border-radius: var(--radius-xl);
+      padding: clamp(24px, 4vw, 44px);
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5), 0 0 40px rgba(184, 98, 242, 0.2);
+      display: grid;
+      grid-template-columns: 1.15fr 0.85fr;
+      align-items: center;
+      gap: 35px;
+    }
+
+    #three-stage-canvas {
+      width: 100%;
+      height: 460px;
+      border-radius: var(--radius-lg);
+      background: radial-gradient(circle at center, #261145 0%, #10061e 70%);
+      cursor: grab;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: inset 0 0 40px rgba(0, 0, 0, 0.8);
+    }
+
+    #three-stage-canvas:active {
+      cursor: grabbing;
+    }
+
+    .stage-info {
+      padding: 10px;
+    }
+
+    .stage-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(255, 126, 187, 0.15);
+      color: var(--pink);
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 14px;
+      border: 1px solid rgba(255, 126, 187, 0.3);
+    }
+
+    .stage-heading {
+      font-family: var(--font-display);
+      font-size: clamp(1.8rem, 3.8vw, 2.7rem);
+      color: #fff;
+      line-height: 1.15;
+      margin-bottom: 14px;
+    }
+
+    .stage-desc {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.75;
+      margin-bottom: 25px;
+    }
+
+    .stage-controls {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .cake-btn-blow {
+      width: 100%;
+      padding: 16px 24px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #ffc837 0%, #ff8008 100%);
+      color: #1a082e;
+      font-weight: 800;
+      font-size: 1.05rem;
+      border: none;
+      cursor: pointer;
+      box-shadow: 0 10px 30px rgba(255, 150, 0, 0.45);
+      transition: all 0.25s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .cake-btn-blow:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 14px 40px rgba(255, 150, 0, 0.65);
+    }
+
+    .cake-btn-confetti {
+      width: 100%;
+      padding: 13px 20px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      color: #fff;
+      border: 1px solid var(--border-glass);
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 0.9rem;
+      transition: all 0.2s ease;
+    }
+
+    .cake-btn-confetti:hover {
+      background: rgba(255, 255, 255, 0.15);
+      border-color: var(--gold);
+    }
+
+    .wish-alert-banner {
+      margin-top: 18px;
+      padding: 16px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, rgba(184, 98, 242, 0.25), rgba(255, 207, 86, 0.2));
+      border: 1px solid var(--border-gold);
+      display: none;
+      animation: fadeInScale 0.5s ease forwards;
+    }
+
+    .wish-alert-banner h4 {
+      font-family: var(--font-display);
+      color: var(--gold-bright);
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .wish-alert-banner p {
+      font-size: 0.92rem;
+      color: #f7eaff;
+      line-height: 1.6;
+    }
+
+    /* SECTION 4: 3D GIFT BOX & LETTER */
+    .gift-section {
+      padding-block: 80px 110px;
       text-align: center;
     }
 
-    .closing h2 {
-      margin-bottom: 14px;
-      color: var(--pink);
-      font-size: clamp(2rem, 5vw, 3.25rem);
+    .gift-stage-box {
+      width: min(620px, 100%);
+      margin: 0 auto;
+      padding: clamp(30px, 6vw, 55px);
+      border-radius: var(--radius-xl);
+      background: var(--bg-card);
+      border: 1px solid var(--border-gold);
+      box-shadow: 0 20px 70px rgba(0, 0, 0, 0.5);
     }
 
-    .closing p {
-      margin: 0;
+    .gift-3d-box-btn {
+      position: relative;
+      width: 190px;
+      height: 175px;
+      margin: 0 auto 25px;
+      cursor: pointer;
+      perspective: 800px;
+      border: none;
+      background: none;
+      display: block;
+    }
+
+    .gift-box-base {
+      position: absolute;
+      bottom: 0;
+      left: 15px;
+      width: 160px;
+      height: 110px;
+      border-radius: 8px 8px 16px 16px;
+      background: linear-gradient(135deg, #c026d3 0%, #7c2ae8 100%);
+      box-shadow: 0 15px 40px rgba(192, 38, 211, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    /* Ribbon bands */
+    .gift-ribbon-vertical {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 65px;
+      width: 30px;
+      background: linear-gradient(180deg, #ffe082 0%, #ffb300 100%);
+      box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.2);
+    }
+
+    .gift-box-lid {
+      position: absolute;
+      top: 40px;
+      left: 6px;
+      width: 178px;
+      height: 34px;
+      border-radius: 8px;
+      background: linear-gradient(135deg, #e879f9 0%, #a855f7 100%);
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      transform-origin: 10px 30px;
+      transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 5;
+    }
+
+    /* Ribbon Bow on Lid */
+    .gift-bow-left,
+    .gift-bow-right {
+      position: absolute;
+      top: -26px;
+      width: 36px;
+      height: 28px;
+      border: 8px solid #ffd54f;
+      border-radius: 50% 50% 6px 50%;
+    }
+    .gift-bow-left {
+      left: 60px;
+      transform: rotate(30deg);
+    }
+    .gift-bow-right {
+      left: 84px;
+      border-radius: 50% 50% 50% 6px;
+      transform: rotate(-30deg);
+    }
+
+    /* Lid open animation */
+    .gift-3d-box-btn.is-open .gift-box-lid {
+      transform: rotate(-120deg) translate(-25px, -30px);
+    }
+
+    .gift-hint-text {
+      font-size: 1rem;
+      color: var(--gold-bright);
+      font-weight: 600;
+      margin-bottom: 12px;
+      transition: color 0.3s ease;
+    }
+
+    /* Unfolded Letter */
+    .parchment-letter {
+      margin-top: 30px;
+      padding: clamp(24px, 5vw, 40px);
+      border-radius: 20px;
+      background: linear-gradient(145deg, rgba(255, 248, 235, 0.95), rgba(245, 232, 215, 0.92));
+      color: #2b1338;
+      text-align: left;
+      border: 2px solid #ffd54f;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), inset 0 0 35px rgba(255, 215, 0, 0.2);
+      transform-origin: top center;
+      animation: letterUnfold 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+      display: none;
+      position: relative;
+    }
+
+    .parchment-stamp {
+      position: absolute;
+      top: 25px;
+      right: 25px;
+      width: 55px;
+      height: 55px;
+      border-radius: 50%;
+      border: 2px dashed #9333ea;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      transform: rotate(12deg);
+      opacity: 0.85;
+    }
+
+    .parchment-letter h3 {
+      font-family: var(--font-display);
+      font-size: clamp(1.6rem, 3.5vw, 2.3rem);
+      color: #6b21a8;
+      margin-bottom: 18px;
+    }
+
+    .parchment-letter p {
+      font-family: var(--font-serif);
+      font-size: clamp(1.05rem, 2vw, 1.25rem);
+      line-height: 1.9;
+      color: #261033;
+      margin-bottom: 20px;
+    }
+
+    .parchment-signature {
+      font-family: var(--font-handwriting);
+      font-size: 1.8rem;
+      color: #9333ea;
+      line-height: 1.3;
+    }
+
+    /* CLOSING SECTION */
+    .closing-card {
+      margin-top: 40px;
+      padding: clamp(35px, 6vw, 65px);
+      border-radius: var(--radius-xl);
+      background: linear-gradient(135deg, rgba(147, 51, 234, 0.22), rgba(255, 207, 86, 0.12));
+      border: 1px solid var(--border-gold);
+      text-align: center;
+      box-shadow: 0 25px 70px rgba(0, 0, 0, 0.5);
+    }
+
+    .closing-title {
+      font-family: var(--font-display);
+      font-size: clamp(2rem, 5vw, 3.4rem);
+      margin-bottom: 16px;
+      color: var(--gold-bright);
+    }
+
+    .closing-copy {
+      font-size: clamp(1rem, 2vw, 1.25rem);
       color: var(--muted);
+      max-width: 650px;
+      margin: 0 auto 30px;
       line-height: 1.8;
     }
 
-    footer {
-      padding: 25px 20px 35px;
-      color: #bda9ce;
-      font: 12px/1.6 Arial, sans-serif;
+    /* FLOATING BOTTOM MUSIC PLAYER BAR */
+    .music-bar-dock {
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 100;
+      width: min(720px, calc(100% - 32px));
+      background: rgba(22, 11, 40, 0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border: 1px solid var(--border-gold);
+      border-radius: 999px;
+      padding: 10px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow:
+        0 15px 45px rgba(0, 0, 0, 0.65),
+        0 0 30px rgba(184, 98, 242, 0.35);
+      transition: all 0.3s ease;
+    }
+
+    .music-track-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      min-width: 0;
+    }
+
+    /* Vinyl Record Rotating Disc */
+    .music-vinyl {
+      position: relative;
+      width: 44px;
+      height: 44px;
+      min-width: 44px;
+      border-radius: 50%;
+      background: radial-gradient(circle, #2d184a 25%, #0f051c 60%, #000 100%);
+      border: 2px solid var(--gold);
+      box-shadow: 0 0 10px rgba(255, 207, 86, 0.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+    }
+
+    .music-vinyl.is-spinning {
+      animation: spin 5s linear infinite;
+    }
+
+    .music-vinyl img {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      object-fit: cover;
+    }
+
+    .music-text {
+      min-width: 0;
+    }
+
+    .music-title {
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #fff;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .music-artist {
+      font-size: 0.74rem;
+      color: var(--gold);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Audio Equalizer Waves */
+    .music-equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 22px;
+      padding-inline: 4px;
+    }
+
+    .eq-bar {
+      width: 3.5px;
+      height: 6px;
+      background: linear-gradient(180deg, var(--gold-bright), #c026d3);
+      border-radius: 2px;
+      transition: height 0.08s ease;
+    }
+
+    .music-controls-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .btn-music-play {
+      width: 42px;
+      height: 42px;
+      min-width: 42px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #a855f7, #ec4899);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      color: #fff;
+      font-size: 1.1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      box-shadow: 0 6px 20px rgba(236, 72, 153, 0.4);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-music-play:hover {
+      transform: scale(1.08);
+      box-shadow: 0 8px 25px rgba(236, 72, 153, 0.65);
+    }
+
+    .music-volume-wrap {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .volume-slider {
+      width: 75px;
+      height: 4px;
+      accent-color: var(--gold);
+      cursor: pointer;
+    }
+
+    .music-time {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-variant-numeric: tabular-nums;
+      white-space: nowrap;
+    }
+
+    /* 3D LIGHTBOX MODAL */
+    .lightbox-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 200;
+      background: rgba(8, 3, 16, 0.92);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .lightbox-modal.is-open {
+      display: flex;
+      opacity: 1;
+    }
+
+    .lightbox-dialog {
+      position: relative;
+      max-width: 520px;
+      width: 100%;
+      border-radius: 28px;
+      background: linear-gradient(145deg, #24113b, #120720);
+      border: 2px solid var(--gold);
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.8), 0 0 50px rgba(255, 207, 86, 0.35);
+      padding: 16px;
+      transform: scale(0.92);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .lightbox-modal.is-open .lightbox-dialog {
+      transform: scale(1);
+    }
+
+    .lightbox-close-btn {
+      position: absolute;
+      top: -16px;
+      right: -16px;
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #ff5e7e;
+      border: 2px solid #fff;
+      color: #fff;
+      font-size: 1.1rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.5);
+      transition: transform 0.2s ease;
+      z-index: 10;
+    }
+
+    .lightbox-close-btn:hover {
+      transform: scale(1.15) rotate(90deg);
+    }
+
+    .lightbox-img-wrap {
+      width: 100%;
+      height: clamp(340px, 50vh, 480px);
+      border-radius: 18px;
+      overflow: hidden;
+      background: #000;
+      border: 3px solid #2d164a;
+    }
+
+    .lightbox-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .lightbox-body {
+      padding: 16px 8px 6px;
       text-align: center;
     }
 
-    .music-button {
-      position: fixed;
-      z-index: 10;
-      right: 18px;
-      bottom: 18px;
-      min-width: 132px;
-      min-height: 44px;
-      border: 1px solid rgba(255, 225, 255, .66);
+    .lightbox-title {
+      font-family: var(--font-display);
+      font-size: 1.35rem;
+      color: var(--gold-bright);
+      margin-bottom: 6px;
+    }
+
+    .lightbox-desc {
+      font-size: 0.92rem;
+      color: var(--muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+
+    .lightbox-reactions {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+    }
+
+    .reaction-btn {
+      padding: 8px 14px;
       border-radius: 999px;
-      background: linear-gradient(120deg, #bd7ce2, #8046b4);
-      box-shadow: 0 8px 28px rgba(173, 100, 220, .38);
-      color: white;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid var(--border-glass);
+      color: #fff;
+      font-size: 0.85rem;
       cursor: pointer;
-      font: 700 13px/1 Arial, sans-serif;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s ease;
     }
 
-    .music-button:focus-visible {
-      outline: 3px solid white;
-      outline-offset: 4px;
+    .reaction-btn:hover {
+      background: var(--gold);
+      color: #1a082e;
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 6px 20px rgba(255, 207, 86, 0.4);
     }
 
-    .floating-heart {
+    /* Floating Celebration Elements */
+    .click-sparkle {
       position: fixed;
-      z-index: 5;
-      bottom: -30px;
       pointer-events: none;
-      animation: float-up 5s linear forwards;
+      z-index: 999;
+      animation: sparkleFly 1s ease-out forwards;
+      font-size: 20px;
     }
 
-    @keyframes float-up {
-      to {
-        opacity: 0;
-        transform: translateY(-110vh) rotate(25deg);
-      }
+    /* Keyframe Animations */
+    @keyframes spin {
+      to { transform: rotate(360deg); }
     }
 
-    @media (max-width: 720px) {
+    @keyframes pulse-badge {
+      0%, 100% { transform: scale(1); filter: drop-shadow(0 0 4px gold); }
+      50% { transform: scale(1.15); filter: drop-shadow(0 0 10px #ff69b4); }
+    }
+
+    @keyframes float-slow {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-10px); }
+    }
+
+    @keyframes fadeInScale {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    @keyframes letterUnfold {
+      0% { opacity: 0; transform: rotateX(-40deg) translateY(-20px); }
+      100% { opacity: 1; transform: rotateX(0deg) translateY(0); }
+    }
+
+    @keyframes sparkleFly {
+      0% { opacity: 1; transform: translate(0, 0) scale(1); }
+      100% { opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.6); }
+    }
+
+    /* RESPONSIVE DESIGN */
+    @media (max-width: 900px) {
       .hero {
-        min-height: auto;
         grid-template-columns: 1fr;
-        gap: 44px;
-        padding-block: 80px 55px;
+        padding-top: 85px;
         text-align: center;
+        gap: 45px;
       }
 
-      .hero-copy {
+      .hero-subtitle {
         margin-inline: auto;
       }
 
-      .hero-photo-wrap {
-        width: min(78%, 340px);
+      .hero-actions,
+      .hero-features {
+        justify-content: center;
       }
 
-      .hero-photo {
-        height: min(112vw, 470px);
+      .hero-frame-container {
+        width: min(85%, 360px);
       }
 
-      .photo-note {
-        right: -17px;
+      .stage-card {
+        grid-template-columns: 1fr;
       }
 
-      .gallery {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+      #three-stage-canvas {
+        height: 380px;
       }
 
-      .memory,
-      .memory img {
-        min-height: 210px;
+      .carousel-3d-wrapper {
+        height: 480px;
+      }
+
+      .carousel-3d-stage {
+        width: 240px;
+        height: 340px;
       }
     }
 
-    @media (max-width: 420px) {
-      .page-width {
-        width: min(100% - 30px, 1100px);
+    @media (max-width: 600px) {
+      .nav-links {
+        display: none;
       }
 
-      .gallery {
-        grid-template-columns: 1fr 1fr;
+      .music-bar-dock {
+        padding: 8px 14px;
+        gap: 10px;
       }
 
-      .memory,
-      .memory img {
-        min-height: 165px;
+      .volume-slider,
+      .music-volume-wrap {
+        display: none;
       }
 
-      .letter {
-        padding: 20px;
+      .carousel-3d-wrapper {
+        height: 440px;
+      }
+
+      .carousel-3d-stage {
+        width: 220px;
+        height: 320px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
         scroll-behavior: auto !important;
-        animation-duration: .01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: .01ms !important;
       }
     }
   </style>
 </head>
 <body>
-  <div class="stars" aria-hidden="true"></div>
 
-  <audio id="birthday-music" loop preload="metadata">
+  <!-- Ambient Dynamic Starfield Canvas -->
+  <canvas id="ambient-canvas" aria-hidden="true"></canvas>
+
+  <!-- Hidden Audio Element -->
+  <audio id="birthday-audio" loop preload="auto">
     <source src="photos/birthday-song.mpeg" type="audio/mpeg">
+    <source src="photos/birthday-song.mpeg" type="audio/mp3">
   </audio>
-  <button class="music-button" id="music-button" type="button" aria-label="Play birthday music">
-    🎵 Play music
-  </button>
+
+  <!-- Floating Navigation Pill -->
+  <header class="nav-header">
+    <a href="#" class="nav-brand">
+      <span>👑</span> Sourav's Birthday
+    </a>
+    <ul class="nav-links">
+      <li><a href="#photo-realm">3D Memories</a></li>
+      <li><a href="#stage-3d">3D Cake</a></li>
+      <li><a href="#gift-section">Birthday Gift</a></li>
+    </ul>
+    <button class="nav-btn-music" id="nav-music-toggle" type="button" aria-label="Toggle Birthday Music">
+      <span id="nav-music-icon">🎵</span>
+      <span id="nav-music-text">Play Song</span>
+    </button>
+  </header>
 
   <main>
-    <section class="hero page-width" aria-labelledby="welcome-title">
-      <div>
-        <p class="eyebrow">A little magic for someone special</p>
-        <h1 id="welcome-title">Hey, <span>Sourav!</span></h1>
-        <p class="hero-copy">
-          Today is all about celebrating you, the memories we share, and all the
-          wonderful moments still to come. I made you a little surprise. 💜
+    <!-- HERO SECTION -->
+    <section class="hero page-width" aria-labelledby="hero-title">
+      <div class="hero-content">
+        <div class="hero-badge">
+          ✨ Special Birthday Edition ✨
+        </div>
+        <h1 class="hero-title" id="hero-title">
+          Happy Birthday,
+          <span class="name-gradient">Sourav!</span>
+        </h1>
+        <p class="hero-subtitle">
+          Today the spotlight shines entirely on you! Celebrating your warmth, legendary friendship, unforgettable adventures, and every extraordinary milestone yet to come.
         </p>
-        <a class="button" href="#gift">Open your birthday gift <span aria-hidden="true">↓</span></a>
+
+        <div class="hero-actions">
+          <button class="btn-glow btn-glow-primary" id="btn-start-celebration" type="button">
+            🎉 Start Celebration
+          </button>
+          <a class="btn-glow btn-glow-gold" href="#stage-3d">
+            🎂 Make a Wish
+          </a>
+          <a class="btn-glow btn-glow-outline" href="#photo-realm">
+            📸 3D Photo Realm ↓
+          </a>
+        </div>
+
+        <div class="hero-features">
+          <div class="hero-feat-item">
+            <span>✓</span> 3D Interactive Frames
+          </div>
+          <div class="hero-feat-item">
+            <span>✓</span> 3D Candle & Cake
+          </div>
+          <div class="hero-feat-item">
+            <span>✓</span> Audio Beat Sync
+          </div>
+        </div>
       </div>
-      <div class="hero-photo-wrap">
-        <img class="hero-photo" src="photos/sourav-portrait.jpeg" alt="Sourav, looking sharp in his birthday portrait">
-        <div class="photo-note">Today's main character ✨</div>
+
+      <!-- HERO 3D PICTURE FRAME -->
+      <div class="hero-frame-container" id="hero-frame-container">
+        <!-- Floating Badges -->
+        <div class="hero-floating-badge badge-top-right">
+          ⭐ The Birthday Star
+        </div>
+        <div class="hero-floating-badge badge-bottom-left">
+          ✨ Main Character Energy
+        </div>
+
+        <!-- 3D Luxury Frame with Mouse Tilt -->
+        <div class="luxury-3d-frame" id="hero-3d-frame" title="Drag or move cursor to tilt in 3D">
+          <!-- Metallic Corner Pins -->
+          <div class="corner-pin pin-tl"></div>
+          <div class="corner-pin pin-tr"></div>
+          <div class="corner-pin pin-bl"></div>
+          <div class="corner-pin pin-br"></div>
+
+          <div class="frame-inner-matting">
+            <img class="frame-image" src="photos/sourav-portrait.jpeg" alt="Sourav's Birthday Portrait" loading="eager">
+            <div class="frame-glare" id="hero-frame-glare"></div>
+          </div>
+
+          <!-- Engraved Plaque -->
+          <div class="frame-plaque">
+            ★ SOURAV · ICONIC ★
+          </div>
+        </div>
       </div>
     </section>
 
-    <section class="section page-width" id="gift" aria-labelledby="gift-title">
-      <p class="eyebrow">Made with love & friendship</p>
-      <h2 class="section-heading" id="gift-title">A little gift for you</h2>
-      <p class="section-intro">There’s a birthday wish waiting inside. Tap the gift to open it!</p>
-
-      <div class="gift-card">
-        <button class="gift-wrap" id="gift-button" type="button" aria-label="Open your birthday gift" aria-expanded="false" aria-controls="birthday-letter">
-          <span class="gift" aria-hidden="true"><span class="gift-lid"></span></span>
-        </button>
-        <p class="gift-instruction" id="gift-instruction">Tap the gift box 🎁</p>
-
-        <div class="letter" id="birthday-letter" hidden>
-          <h3>Happy Birthday, Sourav! 💜</h3>
-          <p>
-            I hope your new year is full of laughter, exciting adventures, and
-            all the little things that make you happy. Thank you for being such
-            a wonderful friend and for all the memories we’ve made together.
-            Keep being your amazing self—you deserve the very best. Here’s to
-            many more unforgettable moments! 🎂✨
-            <br><br>
-            With lots of love and friendship,<br>
-            Your best friend 💜
+    <!-- SECTION 2: 3D PHOTO GALLERY REALM -->
+    <section class="section gallery-section" id="photo-realm" aria-labelledby="gallery-title">
+      <div class="page-width">
+        <div class="section-header">
+          <span class="eyebrow">3D Interactive Exhibition</span>
+          <h2 class="section-title" id="gallery-title">Our Memory Lane 📸</h2>
+          <p class="section-subtitle">
+            Every picture tells a story of genuine friendship, bright smiles, and unforgettable moments. Experience them in interactive 3D!
           </p>
         </div>
-      </div>
-    </section>
 
-    <section class="section memories" aria-labelledby="memories-title">
-      <div class="page-width">
-        <p class="eyebrow">Little moments, big memories</p>
-        <h2 class="section-heading" id="memories-title">Our memory lane 📸</h2>
-        <p class="section-intro">Some pictures are just too special not to celebrate.</p>
-        <div class="gallery">
-          <figure class="memory">
-            <img src="photos/best-friend-memory.jpeg" alt="A happy mirror selfie together while out shopping" loading="lazy">
-          </figure>
-          <figure class="memory">
-            <img src="photos/together-memory.jpeg" alt="A favorite mirror selfie together" loading="lazy">
-          </figure>
-          <figure class="memory">
-            <img src="photos/birthday-portrait.jpeg" alt="Sourav in a white shirt, ready to celebrate" loading="lazy">
-          </figure>
+        <!-- Mode Switcher Tabs -->
+        <div class="mode-switcher" role="tablist" aria-label="Gallery View Modes">
+          <button class="mode-tab-btn is-active" id="tab-carousel" type="button" role="tab" aria-selected="true">
+            🔄 3D Ring Carousel
+          </button>
+          <button class="mode-tab-btn" id="tab-cube" type="button" role="tab" aria-selected="false">
+            🎲 3D Floating Cube
+          </button>
+          <button class="mode-tab-btn" id="tab-wall" type="button" role="tab" aria-selected="false">
+            🖼️ 3D Parallax Wall
+          </button>
+        </div>
+
+        <!-- VIEW 1: 3D CYLINDRICAL CAROUSEL -->
+        <div class="carousel-3d-wrapper" id="carousel-wrapper">
+          <div class="carousel-3d-stage" id="carousel-stage">
+            <!-- 4 3D Framed Cards -->
+            <div class="frame-card-3d" data-index="0" data-img="photos/sourav-portrait.jpeg" data-title="The Birthday Star ✨" data-desc="Radiant smile, big ambitions, and a golden heart. Sourav in his absolute finest!">
+              <div class="frame-card-image-wrap">
+                <img class="frame-card-image" src="photos/sourav-portrait.jpeg" alt="Sourav looking sharp">
+              </div>
+              <div class="frame-card-info">
+                <span class="frame-card-title">Sourav · The Star ✨</span>
+                <span class="frame-card-btn">Inspect 🔍</span>
+              </div>
+            </div>
+
+            <div class="frame-card-3d" data-index="1" data-img="photos/birthday-portrait.jpeg" data-title="Ready to Celebrate 🥂" data-desc="Suited up in pristine white, sharp as ever, and ready to conquer the celebration!">
+              <div class="frame-card-image-wrap">
+                <img class="frame-card-image" src="photos/birthday-portrait.jpeg" alt="Sourav in celebration attire">
+              </div>
+              <div class="frame-card-info">
+                <span class="frame-card-title">Celebration Ready 👔</span>
+                <span class="frame-card-btn">Inspect 🔍</span>
+              </div>
+            </div>
+
+            <div class="frame-card-3d" data-index="2" data-img="photos/best-friend-memory.jpeg" data-title="Shopping & Fun Moments 🛍️" data-desc="Spontaneous shopping trips, endless mirror selfies, and laughing until our stomachs hurt!">
+              <div class="frame-card-image-wrap">
+                <img class="frame-card-image" src="photos/best-friend-memory.jpeg" alt="Mirror selfie while shopping">
+              </div>
+              <div class="frame-card-info">
+                <span class="frame-card-title">Adventures & Laughs 💖</span>
+                <span class="frame-card-btn">Inspect 🔍</span>
+              </div>
+            </div>
+
+            <div class="frame-card-3d" data-index="3" data-img="photos/together-memory.jpeg" data-title="Friends For A Lifetime 🌟" data-desc="Through thick and thin, the best memories are the ones spent together. Cheers to true friendship!">
+              <div class="frame-card-image-wrap">
+                <img class="frame-card-image" src="photos/together-memory.jpeg" alt="Cherished friendship moment">
+              </div>
+              <div class="frame-card-info">
+                <span class="frame-card-title">Timeless Memories 📸</span>
+                <span class="frame-card-btn">Inspect 🔍</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Carousel Controls -->
+        <div class="carousel-controls" id="carousel-controls">
+          <button class="carousel-nav-btn" id="carousel-prev" type="button" aria-label="Previous 3D Photo">❮</button>
+          <div class="carousel-indicators">
+            <span class="carousel-dot is-active" data-idx="0"></span>
+            <span class="carousel-dot" data-idx="1"></span>
+            <span class="carousel-dot" data-idx="2"></span>
+            <span class="carousel-dot" data-idx="3"></span>
+          </div>
+          <button class="carousel-nav-btn" id="carousel-next" type="button" aria-label="Next 3D Photo">❯</button>
+          <button class="mode-tab-btn" id="carousel-autoplay-btn" type="button" style="margin-left: 10px;">
+            <span id="autoplay-icon">⏸</span> Auto-Orbit
+          </button>
+        </div>
+        <p class="carousel-hint" id="carousel-hint">💡 Drag horizontally or use arrow buttons to rotate the 3D ring</p>
+
+        <!-- VIEW 2: 3D FLOATING CUBE -->
+        <div class="cube-3d-wrapper" id="cube-wrapper">
+          <div class="cube-3d" id="cube-3d">
+            <div class="cube-face cube-face-front" data-img="photos/sourav-portrait.jpeg" data-title="Sourav's Birthday Portrait" data-desc="A shining smile that lights up every room.">
+              <img src="photos/sourav-portrait.jpeg" alt="Front Face">
+            </div>
+            <div class="cube-face cube-face-right" data-img="photos/birthday-portrait.jpeg" data-title="Dressed in White" data-desc="Classy, elegant, and ready for his special day.">
+              <img src="photos/birthday-portrait.jpeg" alt="Right Face">
+            </div>
+            <div class="cube-face cube-face-back" data-img="photos/best-friend-memory.jpeg" data-title="Best Friends Adventures" data-desc="Never a dull moment when we are together.">
+              <img src="photos/best-friend-memory.jpeg" alt="Back Face">
+            </div>
+            <div class="cube-face cube-face-left" data-img="photos/together-memory.jpeg" data-title="Favorite Together Mirror Selfie" data-desc="Memories etched forever in our hearts.">
+              <img src="photos/together-memory.jpeg" alt="Left Face">
+            </div>
+            <div class="cube-face cube-face-top">
+              <h4 style="font-size: 1.1rem; margin-bottom: 8px;">👑 SOURAV 👑</h4>
+              <p style="font-size: 0.82rem; color: #ffe685;">HAPPY BIRTHDAY</p>
+            </div>
+            <div class="cube-face cube-face-bottom"></div>
+          </div>
+        </div>
+        <p class="carousel-hint" id="cube-hint" style="display: none;">💡 Click and drag the cube in any direction to spin in 3D</p>
+
+        <!-- VIEW 3: 3D WALL GALLERY -->
+        <div class="wall-3d-wrapper" id="wall-wrapper">
+          <div class="wall-card-3d" data-img="photos/sourav-portrait.jpeg" data-title="Sourav · The Star ✨" data-desc="The main character of today's celebration.">
+            <div class="wall-card-img-wrap">
+              <img src="photos/sourav-portrait.jpeg" alt="Sourav portrait">
+            </div>
+            <div class="wall-card-caption">
+              <strong>Sourav · Icon</strong>
+              <span class="frame-card-btn">View 🔍</span>
+            </div>
+          </div>
+
+          <div class="wall-card-3d" data-img="photos/birthday-portrait.jpeg" data-title="Birthday Glow 👔" data-desc="Looking sharp in white, ready to party.">
+            <div class="wall-card-img-wrap">
+              <img src="photos/birthday-portrait.jpeg" alt="Birthday portrait">
+            </div>
+            <div class="wall-card-caption">
+              <strong>Celebration Vibe</strong>
+              <span class="frame-card-btn">View 🔍</span>
+            </div>
+          </div>
+
+          <div class="wall-card-3d" data-img="photos/best-friend-memory.jpeg" data-title="Fun Shopping Trip 🥂" data-desc="Mirror selfie moments that make you smile.">
+            <div class="wall-card-img-wrap">
+              <img src="photos/best-friend-memory.jpeg" alt="Mirror selfie">
+            </div>
+            <div class="wall-card-caption">
+              <strong>Friendship Joy</strong>
+              <span class="frame-card-btn">View 🔍</span>
+            </div>
+          </div>
+
+          <div class="wall-card-3d" data-img="photos/together-memory.jpeg" data-title="Unforgettable Bond 💖" data-desc="Cherished moments frozen in time.">
+            <div class="wall-card-img-wrap">
+              <img src="photos/together-memory.jpeg" alt="Together memory">
+            </div>
+            <div class="wall-card-caption">
+              <strong>Always Together</strong>
+              <span class="frame-card-btn">View 🔍</span>
+            </div>
+          </div>
         </div>
       </div>
     </section>
 
-    <section class="closing" aria-labelledby="closing-title">
-      <p class="eyebrow">One last thing</p>
-      <h2 id="closing-title">Stay magical, Sourav! ✨</h2>
-      <p>Wishing you the happiest birthday and a year full of reasons to smile. 🌙💜🎂</p>
+    <!-- SECTION 3: 3D THREE.JS BIRTHDAY STAGE (Cake, Candles & Balloons) -->
+    <section class="section stage-section page-width" id="stage-3d" aria-labelledby="stage-title">
+      <div class="stage-card">
+        <!-- Three.js 3D Canvas -->
+        <div id="three-stage-canvas" title="Click and drag to rotate the 3D Birthday Cake"></div>
+
+        <!-- Stage Info & Controls -->
+        <div class="stage-info">
+          <div class="stage-badge">
+            🎂 Interactive 3D Ceremony
+          </div>
+          <h2 class="stage-heading" id="stage-title">
+            Make a Wish & Blow the Candle!
+          </h2>
+          <p class="stage-desc">
+            Here's a 3D birthday cake crafted specially for you, surrounded by floating celebratory balloons and golden stars. Close your eyes, think of your biggest dream for the year ahead, and blow out the candle!
+          </p>
+
+          <div class="stage-controls">
+            <button class="cake-btn-blow" id="btn-blow-candle" type="button">
+              <span id="blow-icon">🌬️</span> <span id="blow-text">Blow Out the Candle!</span>
+            </button>
+            <button class="cake-btn-confetti" id="btn-fireworks" type="button">
+              ✨ Launch Full Celebration Fireworks
+            </button>
+          </div>
+
+          <!-- Wish Banner Revealed upon blowing -->
+          <div class="wish-alert-banner" id="wish-banner">
+            <h4>🎉 WISH SENT TO THE STARS!</h4>
+            <p>
+              Sourav, may this year bless you with boundless success, unshakable health, extraordinary adventures, and reasons to smile every single day! 💜🎂
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SECTION 4: 3D GIFT BOX & HEARTFELT LETTER -->
+    <section class="section gift-section page-width" id="gift-section" aria-labelledby="gift-heading">
+      <div class="section-header">
+        <span class="eyebrow">Sent with pure friendship</span>
+        <h2 class="section-title" id="gift-heading">A Gift for Sourav 🎁</h2>
+        <p class="section-subtitle">
+          Inside this 3D gift box is a heartfelt letter written just for you. Tap to unwrap!
+        </p>
+      </div>
+
+      <div class="gift-stage-box">
+        <button class="gift-3d-box-btn" id="gift-box-btn" type="button" aria-label="Open your 3D Birthday Gift" aria-expanded="false">
+          <!-- Box Base -->
+          <div class="gift-box-base">
+            <div class="gift-ribbon-vertical"></div>
+          </div>
+          <!-- Box Lid with Bow -->
+          <div class="gift-box-lid">
+            <div class="gift-bow-left"></div>
+            <div class="gift-bow-right"></div>
+          </div>
+        </button>
+
+        <p class="gift-hint-text" id="gift-hint-text">✨ Tap the 3D gift box to unlock your wish ✨</p>
+
+        <!-- Unfolding Parchment Letter -->
+        <div class="parchment-letter" id="parchment-letter">
+          <div class="parchment-stamp">💜</div>
+          <h3>Happy Birthday, Sourav! 💜</h3>
+          <p>
+            I hope your new year is overflowing with laughter, exciting adventures, and all the magical little things that make you truly happy.
+          </p>
+          <p>
+            Thank you for being such an authentic, incredible friend and for all the unforgettable memories we have created together. Never stop being your amazing, inspiring self—you deserve the absolute best that life has to offer!
+          </p>
+          <p>
+            Here is to conquering new goals, making more unforgettable memories, and celebrating many more birthdays together! 🎂🥂✨
+          </p>
+          <div class="parchment-signature">
+            With lots of love and friendship,<br>
+            Your Best Friend 💜
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CLOSING CARD -->
+    <section class="page-width">
+      <div class="closing-card">
+        <span class="eyebrow">Always Shining</span>
+        <h2 class="closing-title">Stay Magical, Sourav! ✨</h2>
+        <p class="closing-copy">
+          May the year ahead be your most rewarding, inspiring, and joyful chapter yet. Keep spreading good vibes wherever you go!
+        </p>
+        <button class="btn-glow btn-glow-gold" id="btn-final-blast" type="button">
+          🎊 Shower Birthday Confetti!
+        </button>
+      </div>
     </section>
   </main>
 
-  <footer>A birthday surprise made just for Sourav · With love & friendship 💜</footer>
+  <footer style="text-align: center; padding: 45px 20px 105px; color: var(--muted); font-size: 0.85rem;">
+    A 3D Birthday Celebration Experience crafted with love & friendship for Sourav · 2026 💜
+  </footer>
 
+  <!-- FLOATING BOTTOM MUSIC PLAYER BAR -->
+  <aside class="music-bar-dock" id="music-player-bar" aria-label="Birthday Audio Player">
+    <div class="music-track-info">
+      <div class="music-vinyl" id="vinyl-disc">
+        <img src="photos/sourav-portrait.jpeg" alt="Album Cover">
+      </div>
+      <div class="music-text">
+        <div class="music-title">Birthday Celebration Song 🎵</div>
+        <div class="music-artist">Sourav's Special Melody</div>
+      </div>
+    </div>
+
+    <!-- Live Equalizer Bars -->
+    <div class="music-equalizer" id="equalizer-bars">
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+      <span class="eq-bar"></span>
+    </div>
+
+    <div class="music-controls-group">
+      <span class="music-time" id="music-time-display">0:00</span>
+      <button class="btn-music-play" id="btn-toggle-play" type="button" aria-label="Play or Pause Birthday Music">
+        ▶
+      </button>
+      <div class="music-volume-wrap">
+        <span style="font-size: 0.85rem;" id="volume-icon">🔊</span>
+        <input class="volume-slider" id="volume-slider" type="range" min="0" max="1" step="0.05" value="0.85" aria-label="Music volume">
+      </div>
+    </div>
+  </aside>
+
+  <!-- 3D LIGHTBOX MODAL -->
+  <div class="lightbox-modal" id="lightbox-modal" role="dialog" aria-modal="true" aria-labelledby="lightbox-title">
+    <div class="lightbox-dialog">
+      <button class="lightbox-close-btn" id="lightbox-close-btn" type="button" aria-label="Close modal">✕</button>
+      <div class="lightbox-img-wrap">
+        <img class="lightbox-img" id="lightbox-img" src="" alt="Full view">
+      </div>
+      <div class="lightbox-body">
+        <h3 class="lightbox-title" id="lightbox-title">Memory Title</h3>
+        <p class="lightbox-desc" id="lightbox-desc">Memory description goes here.</p>
+        <div class="lightbox-reactions">
+          <button class="reaction-btn" data-emoji="💖" type="button">💖 Love</button>
+          <button class="reaction-btn" data-emoji="🎉" type="button">🎉 Celebrate</button>
+          <button class="reaction-btn" data-emoji="🥂" type="button">🥂 Cheers</button>
+          <button class="reaction-btn" data-emoji="⭐" type="button">⭐ Shine</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN SCRIPT -->
   <script>
-    const giftButton = document.getElementById("gift-button");
-    const giftInstruction = document.getElementById("gift-instruction");
-    const birthdayLetter = document.getElementById("birthday-letter");
-    const birthdayMusic = document.getElementById("birthday-music");
-    const musicButton = document.getElementById("music-button");
+    /* ==========================================================
+       1. AMBIENT BACKGROUND CANVAS (Stars, Nebulas & Sparkles)
+       ========================================================== */
+    const ambientCanvas = document.getElementById('ambient-canvas');
+    const ctx = ambientCanvas.getContext('2d');
+    let width, height;
+    let stars = [];
 
-    musicButton.addEventListener("click", async () => {
-      if (birthdayMusic.paused) {
-        try {
-          await birthdayMusic.play();
-          musicButton.textContent = "⏸ Pause music";
-          musicButton.setAttribute("aria-label", "Pause birthday music");
-        } catch (error) {
-          musicButton.textContent = "🎵 Tap to play";
-        }
-      } else {
-        birthdayMusic.pause();
-        musicButton.textContent = "🎵 Play music";
-        musicButton.setAttribute("aria-label", "Play birthday music");
-      }
-    });
+    function resizeCanvas() {
+      width = ambientCanvas.width = window.innerWidth;
+      height = ambientCanvas.height = window.innerHeight;
+      initStars();
+    }
 
-    giftButton.addEventListener("click", () => {
-      const isOpen = giftButton.getAttribute("aria-expanded") === "true";
-      if (isOpen) return;
-
-      giftButton.classList.add("is-open");
-      giftButton.setAttribute("aria-expanded", "true");
-      giftInstruction.textContent = "Your birthday wish is here 💜";
-      birthdayLetter.hidden = false;
-      if (birthdayMusic.paused) {
-        birthdayMusic.play().then(() => {
-          musicButton.textContent = "⏸ Pause music";
-          musicButton.setAttribute("aria-label", "Pause birthday music");
-        }).catch(() => {
-          musicButton.textContent = "🎵 Play music";
+    function initStars() {
+      stars = [];
+      const count = Math.floor((width * height) / 8000);
+      for (let i = 0; i < count; i++) {
+        stars.push({
+          x: Math.random() * width,
+          y: Math.random() * height,
+          radius: Math.random() * 1.8 + 0.4,
+          alpha: Math.random() * 0.8 + 0.2,
+          speed: Math.random() * 0.02 + 0.005,
+          color: Math.random() > 0.4 ? '#ffcf56' : (Math.random() > 0.5 ? '#f472b6' : '#c084fc')
         });
       }
-      releaseHearts();
+    }
+
+    let starTime = 0;
+    function renderAmbient() {
+      starTime += 0.015;
+      ctx.clearRect(0, 0, width, height);
+      for (let i = 0; i < stars.length; i++) {
+        const s = stars[i];
+        const flicker = Math.sin(starTime + i) * 0.35 + 0.65;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.radius, 0, Math.PI * 2);
+        ctx.fillStyle = s.color;
+        ctx.globalAlpha = s.alpha * flicker;
+        ctx.shadowBlur = s.radius * 3;
+        ctx.shadowColor = s.color;
+        ctx.fill();
+      }
+      ctx.globalAlpha = 1.0;
+      requestAnimationFrame(renderAmbient);
+    }
+
+    window.addEventListener('resize', resizeCanvas);
+    resizeCanvas();
+    renderAmbient();
+
+    /* ==========================================================
+       2. AUDIO SYSTEM & EQUALIZER VISUALIZER
+       ========================================================== */
+    const birthdayAudio = document.getElementById('birthday-audio');
+    const btnTogglePlay = document.getElementById('btn-toggle-play');
+    const navMusicToggle = document.getElementById('nav-music-toggle');
+    const navMusicIcon = document.getElementById('nav-music-icon');
+    const navMusicText = document.getElementById('nav-music-text');
+    const vinylDisc = document.getElementById('vinyl-disc');
+    const volumeSlider = document.getElementById('volume-slider');
+    const volumeIcon = document.getElementById('volume-icon');
+    const musicTimeDisplay = document.getElementById('music-time-display');
+    const eqBars = document.querySelectorAll('.eq-bar');
+
+    let audioContext = null;
+    let analyser = null;
+    let audioSource = null;
+    let isPlaying = false;
+    let dataArray = null;
+
+    function initAudioContext() {
+      if (audioContext) return;
+      try {
+        const AudioCtx = window.AudioContext || window.webkitAudioContext;
+        audioContext = new AudioCtx();
+        analyser = audioContext.createAnalyser();
+        analyser.fftSize = 64;
+        audioSource = audioContext.createMediaElementSource(birthdayAudio);
+        audioSource.connect(analyser);
+        analyser.connect(audioContext.destination);
+        dataArray = new Uint8Array(analyser.frequencyBinCount);
+      } catch (e) {
+        console.log('Web Audio API restricted, falling back to procedural EQ animation.');
+      }
+    }
+
+    async function togglePlayAudio() {
+      initAudioContext();
+      if (audioContext && audioContext.state === 'suspended') {
+        await audioContext.resume();
+      }
+
+      if (birthdayAudio.paused) {
+        try {
+          await birthdayAudio.play();
+          setPlayingUI(true);
+        } catch (err) {
+          console.warn('Playback error:', err);
+        }
+      } else {
+        birthdayAudio.pause();
+        setPlayingUI(false);
+      }
+    }
+
+    function setPlayingUI(playing) {
+      isPlaying = playing;
+      if (playing) {
+        btnTogglePlay.textContent = '⏸';
+        navMusicIcon.textContent = '⏸';
+        navMusicText.textContent = 'Pause Song';
+        vinylDisc.classList.add('is-spinning');
+      } else {
+        btnTogglePlay.textContent = '▶';
+        navMusicIcon.textContent = '🎵';
+        navMusicText.textContent = 'Play Song';
+        vinylDisc.classList.remove('is-spinning');
+        eqBars.forEach(b => b.style.height = '6px');
+      }
+    }
+
+    btnTogglePlay.addEventListener('click', togglePlayAudio);
+    navMusicToggle.addEventListener('click', togglePlayAudio);
+
+    volumeSlider.addEventListener('input', (e) => {
+      birthdayAudio.volume = parseFloat(e.target.value);
+      volumeIcon.textContent = birthdayAudio.volume === 0 ? '🔇' : (birthdayAudio.volume < 0.5 ? '🔉' : '🔊');
     });
 
-    const heroPhoto = document.querySelector(".hero-photo-wrap");
-    if (heroPhoto && window.matchMedia("(pointer: fine)").matches) {
-      heroPhoto.addEventListener("pointermove", (event) => {
-        const rect = heroPhoto.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - 0.5;
-        const y = (event.clientY - rect.top) / rect.height - 0.5;
-        heroPhoto.style.transform =
-          `rotate(2deg) rotateY(${x * 10}deg) rotateX(${y * -10}deg) translateZ(12px)`;
+    birthdayAudio.addEventListener('timeupdate', () => {
+      const cur = Math.floor(birthdayAudio.currentTime);
+      const min = Math.floor(cur / 60);
+      const sec = cur % 60;
+      musicTimeDisplay.textContent = `${min}:${sec < 10 ? '0' : ''}${sec}`;
+    });
+
+    // Equalizer update loop
+    let eqTime = 0;
+    function updateEqualizer() {
+      eqTime += 0.15;
+      if (isPlaying) {
+        if (analyser && dataArray) {
+          analyser.getByteFrequencyData(dataArray);
+          for (let i = 0; i < eqBars.length; i++) {
+            const val = dataArray[i * 2] || 0;
+            const h = Math.max(5, (val / 255) * 22);
+            eqBars[i].style.height = `${h}px`;
+          }
+        } else {
+          // Procedural bounce fallback
+          for (let i = 0; i < eqBars.length; i++) {
+            const h = Math.max(5, Math.sin(eqTime + i * 1.2) * 8 + 12);
+            eqBars[i].style.height = `${h}px`;
+          }
+        }
+      }
+      requestAnimationFrame(updateEqualizer);
+    }
+    updateEqualizer();
+
+    /* ==========================================================
+       3. HERO 3D FRAME MOUSE / TOUCH PARALLAX
+       ========================================================== */
+    const heroFrameWrap = document.getElementById('hero-frame-container');
+    const hero3dFrame = document.getElementById('hero-3d-frame');
+    const heroGlare = document.getElementById('hero-frame-glare');
+
+    if (heroFrameWrap && hero3dFrame) {
+      heroFrameWrap.addEventListener('pointermove', (e) => {
+        const rect = heroFrameWrap.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+
+        const rotX = py * -24;
+        const rotY = px * 26;
+        hero3dFrame.style.transform = `rotateX(${rotX}deg) rotateY(${rotY}deg) scale3d(1.03, 1.03, 1.03)`;
+        if (heroGlare) {
+          const glareX = 50 + px * 60;
+          const glareY = 50 + py * 60;
+          heroGlare.style.background = `radial-gradient(circle at ${glareX}% ${glareY}%, rgba(255,255,255,0.4) 0%, transparent 60%)`;
+        }
       });
-      heroPhoto.addEventListener("pointerleave", () => {
-        heroPhoto.style.transform = "rotate(2deg)";
+
+      heroFrameWrap.addEventListener('pointerleave', () => {
+        hero3dFrame.style.transform = 'rotateX(0deg) rotateY(0deg) scale3d(1, 1, 1)';
+        if (heroGlare) {
+          heroGlare.style.background = '';
+        }
       });
     }
 
-    document.querySelectorAll(".memory").forEach((card) => {
-      card.addEventListener("pointermove", (event) => {
-        if (!window.matchMedia("(pointer: fine)").matches) return;
-        const rect = card.getBoundingClientRect();
-        const x = (event.clientX - rect.left) / rect.width - 0.5;
-        const y = (event.clientY - rect.top) / rect.height - 0.5;
-        card.classList.add("is-tilting");
-        card.style.transform =
-          `rotateY(${x * 16}deg) rotateX(${y * -16}deg) translateZ(28px)`;
+    /* ==========================================================
+       4. 3D PHOTO GALLERY MODES (Carousel, Cube & Wall)
+       ========================================================== */
+    const tabCarousel = document.getElementById('tab-carousel');
+    const tabCube = document.getElementById('tab-cube');
+    const tabWall = document.getElementById('tab-wall');
+
+    const carouselWrapper = document.getElementById('carousel-wrapper');
+    const carouselControls = document.getElementById('carousel-controls');
+    const carouselHint = document.getElementById('carousel-hint');
+
+    const cubeWrapper = document.getElementById('cube-wrapper');
+    const cubeHint = document.getElementById('cube-hint');
+
+    const wallWrapper = document.getElementById('wall-wrapper');
+
+    function switchViewMode(mode) {
+      [tabCarousel, tabCube, tabWall].forEach(t => t.classList.remove('is-active'));
+      carouselWrapper.style.display = 'none';
+      carouselControls.style.display = 'none';
+      carouselHint.style.display = 'none';
+      cubeWrapper.style.display = 'none';
+      cubeHint.style.display = 'none';
+      wallWrapper.style.display = 'none';
+
+      if (mode === 'carousel') {
+        tabCarousel.classList.add('is-active');
+        carouselWrapper.style.display = 'flex';
+        carouselControls.style.display = 'flex';
+        carouselHint.style.display = 'flex';
+      } else if (mode === 'cube') {
+        tabCube.classList.add('is-active');
+        cubeWrapper.style.display = 'flex';
+        cubeHint.style.display = 'block';
+      } else if (mode === 'wall') {
+        tabWall.classList.add('is-active');
+        wallWrapper.style.display = 'grid';
+      }
+    }
+
+    tabCarousel.addEventListener('click', () => switchViewMode('carousel'));
+    tabCube.addEventListener('click', () => switchViewMode('cube'));
+    tabWall.addEventListener('click', () => switchViewMode('wall'));
+
+    // --- CAROUSEL 3D LOGIC ---
+    const carouselStage = document.getElementById('carousel-stage');
+    const carouselCards = carouselStage.querySelectorAll('.frame-card-3d');
+    const dots = document.querySelectorAll('.carousel-dot');
+    const btnPrev = document.getElementById('carousel-prev');
+    const btnNext = document.getElementById('carousel-next');
+    const btnAutoplay = document.getElementById('carousel-autoplay-btn');
+    const autoplayIcon = document.getElementById('autoplay-icon');
+
+    const cardCount = carouselCards.length;
+    const theta = 360 / cardCount; // 90 deg for 4 cards
+    let carouselAngle = 0;
+    let activeIndex = 0;
+    let isAutoplay = true;
+    let autoplayInterval = null;
+
+    // Responsive radius for cylinder
+    function getRadius() {
+      return window.innerWidth < 600 ? 210 : 310;
+    }
+
+    function positionCarouselCards() {
+      const radius = getRadius();
+      carouselCards.forEach((card, idx) => {
+        const cardAngle = idx * theta;
+        card.style.transform = `rotateY(${cardAngle}deg) translateZ(${radius}px)`;
       });
-      card.addEventListener("pointerleave", () => {
-        card.classList.remove("is-tilting");
-        card.style.transform = "";
+    }
+    positionCarouselCards();
+    window.addEventListener('resize', positionCarouselCards);
+
+    function updateCarouselRotation() {
+      carouselStage.style.transform = `rotateY(${carouselAngle}deg)`;
+      const normalizedIdx = ((-Math.round(carouselAngle / theta) % cardCount) + cardCount) % cardCount;
+      activeIndex = normalizedIdx;
+      dots.forEach((dot, i) => {
+        dot.classList.toggle('is-active', i === activeIndex);
+      });
+    }
+
+    function rotateNext() {
+      carouselAngle -= theta;
+      updateCarouselRotation();
+    }
+
+    function rotatePrev() {
+      carouselAngle += theta;
+      updateCarouselRotation();
+    }
+
+    btnNext.addEventListener('click', () => {
+      rotateNext();
+      resetAutoplay();
+    });
+
+    btnPrev.addEventListener('click', () => {
+      rotatePrev();
+      resetAutoplay();
+    });
+
+    dots.forEach((dot) => {
+      dot.addEventListener('click', () => {
+        const targetIdx = parseInt(dot.getAttribute('data-idx'));
+        const diff = targetIdx - activeIndex;
+        carouselAngle -= diff * theta;
+        updateCarouselRotation();
+        resetAutoplay();
       });
     });
 
-    function releaseHearts() {
-      const decorations = ["💜", "✨", "💖", "⭐"];
-      for (let index = 0; index < 18; index += 1) {
-        const heart = document.createElement("span");
-        heart.className = "floating-heart";
-        heart.setAttribute("aria-hidden", "true");
-        heart.textContent = decorations[Math.floor(Math.random() * decorations.length)];
-        heart.style.left = `${Math.random() * 100}vw`;
-        heart.style.animationDelay = `${Math.random() * 1.5}s`;
-        heart.style.fontSize = `${16 + Math.random() * 16}px`;
-        document.body.appendChild(heart);
-        window.setTimeout(() => heart.remove(), 7000);
+    // Touch & Mouse Drag for 3D Carousel
+    let startX = 0;
+    let isDraggingCarousel = false;
+    let initialAngle = 0;
+
+    carouselWrapper.addEventListener('pointerdown', (e) => {
+      isDraggingCarousel = true;
+      startX = e.clientX;
+      initialAngle = carouselAngle;
+      carouselStage.classList.add('is-dragging');
+      clearInterval(autoplayInterval);
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDraggingCarousel) return;
+      const deltaX = e.clientX - startX;
+      carouselAngle = initialAngle + deltaX * 0.35;
+      carouselStage.style.transform = `rotateY(${carouselAngle}deg)`;
+    });
+
+    window.addEventListener('pointerup', () => {
+      if (!isDraggingCarousel) return;
+      isDraggingCarousel = false;
+      carouselStage.classList.remove('is-dragging');
+      // Snap to closest angle
+      carouselAngle = Math.round(carouselAngle / theta) * theta;
+      updateCarouselRotation();
+      resetAutoplay();
+    });
+
+    function startAutoplay() {
+      if (autoplayInterval) clearInterval(autoplayInterval);
+      autoplayInterval = setInterval(rotateNext, 3800);
+      isAutoplay = true;
+      autoplayIcon.textContent = '⏸';
+    }
+
+    function stopAutoplay() {
+      clearInterval(autoplayInterval);
+      isAutoplay = false;
+      autoplayIcon.textContent = '▶';
+    }
+
+    function resetAutoplay() {
+      if (isAutoplay) {
+        clearInterval(autoplayInterval);
+        autoplayInterval = setInterval(rotateNext, 4500);
+      }
+    }
+
+    btnAutoplay.addEventListener('click', () => {
+      if (isAutoplay) stopAutoplay();
+      else startAutoplay();
+    });
+    startAutoplay();
+
+    // --- 3D FLOATING CUBE LOGIC ---
+    const cube = document.getElementById('cube-3d');
+    let cubeRotX = -15;
+    let cubeRotY = 25;
+    let isDraggingCube = false;
+    let cubeStartX = 0, cubeStartY = 0;
+
+    cubeWrapper.addEventListener('pointerdown', (e) => {
+      isDraggingCube = true;
+      cubeStartX = e.clientX;
+      cubeStartY = e.clientY;
+    });
+
+    window.addEventListener('pointermove', (e) => {
+      if (!isDraggingCube) return;
+      const dx = e.clientX - cubeStartX;
+      const dy = e.clientY - cubeStartY;
+      cubeRotY += dx * 0.45;
+      cubeRotX -= dy * 0.45;
+      cube.style.transform = `rotateX(${cubeRotX}deg) rotateY(${cubeRotY}deg)`;
+      cubeStartX = e.clientX;
+      cubeStartY = e.clientY;
+    });
+
+    window.addEventListener('pointerup', () => {
+      isDraggingCube = false;
+    });
+
+    // --- 3D WALL CARDS PARALLAX ---
+    document.querySelectorAll('.wall-card-3d').forEach((card) => {
+      card.addEventListener('pointermove', (e) => {
+        const rect = card.getBoundingClientRect();
+        const px = (e.clientX - rect.left) / rect.width - 0.5;
+        const py = (e.clientY - rect.top) / rect.height - 0.5;
+        card.style.transform = `rotateY(${px * 20}deg) rotateX(${-py * 20}deg) translateZ(18px)`;
+      });
+      card.addEventListener('pointerleave', () => {
+        card.style.transform = 'rotateY(0deg) rotateX(0deg) translateZ(0)';
+      });
+    });
+
+    /* ==========================================================
+       5. 3D LIGHTBOX INSPECTOR MODAL
+       ========================================================== */
+    const lightboxModal = document.getElementById('lightbox-modal');
+    const lightboxImg = document.getElementById('lightbox-img');
+    const lightboxTitle = document.getElementById('lightbox-title');
+    const lightboxDesc = document.getElementById('lightbox-desc');
+    const lightboxCloseBtn = document.getElementById('lightbox-close-btn');
+
+    function openLightbox(imgSrc, title, desc) {
+      lightboxImg.src = imgSrc;
+      lightboxTitle.textContent = title || 'Celebration Memory';
+      lightboxDesc.textContent = desc || 'A moment to cherish forever.';
+      lightboxModal.classList.add('is-open');
+    }
+
+    function closeLightbox() {
+      lightboxModal.classList.remove('is-open');
+    }
+
+    lightboxCloseBtn.addEventListener('click', closeLightbox);
+    lightboxModal.addEventListener('click', (e) => {
+      if (e.target === lightboxModal) closeLightbox();
+    });
+
+    document.querySelectorAll('.frame-card-3d, .cube-face[data-img], .wall-card-3d').forEach((el) => {
+      el.addEventListener('click', (e) => {
+        // Prevent opening if user was dragging
+        if (Math.abs(startX - e.clientX) > 10) return;
+        const img = el.getAttribute('data-img');
+        const title = el.getAttribute('data-title');
+        const desc = el.getAttribute('data-desc');
+        if (img) openLightbox(img, title, desc);
+      });
+    });
+
+    // Reaction Buttons inside Lightbox
+    document.querySelectorAll('.reaction-btn').forEach((btn) => {
+      btn.addEventListener('click', (e) => {
+        const emoji = btn.getAttribute('data-emoji');
+        spawnClickParticles(e.clientX, e.clientY, emoji);
+        if (typeof confetti === 'function') {
+          confetti({
+            particleCount: 25,
+            spread: 50,
+            origin: { x: e.clientX / window.innerWidth, y: e.clientY / window.innerHeight }
+          });
+        }
+      });
+    });
+
+    /* ==========================================================
+       6. THREE.JS 3D BIRTHDAY STAGE (Cake, Flickering Flame & Balloons)
+       ========================================================== */
+    const stageContainer = document.getElementById('three-stage-canvas');
+    let scene, camera, renderer, cakeGroup, candleFlame, flameLight, smokeParticles = [];
+    let balloons = [];
+    let isCandleBlown = false;
+
+    function initThreeStage() {
+      if (typeof THREE === 'undefined') return;
+
+      const width = stageContainer.clientWidth;
+      const height = stageContainer.clientHeight;
+
+      scene = new THREE.Scene();
+      camera = new THREE.PerspectiveCamera(45, width / height, 0.1, 100);
+      camera.position.set(0, 3.2, 7.5);
+
+      renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+      renderer.setSize(width, height);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.shadowMap.enabled = true;
+      stageContainer.appendChild(renderer.domElement);
+
+      // Controls
+      let controls = null;
+      if (typeof THREE.OrbitControls !== 'undefined') {
+        controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.maxDistance = 12;
+        controls.minDistance = 4;
+        controls.maxPolarAngle = Math.PI / 2 + 0.1;
+      }
+
+      // Lights
+      const ambientLight = new THREE.AmbientLight(0xfff5ea, 1.1);
+      scene.add(ambientLight);
+
+      const dirLight = new THREE.DirectionalLight(0xffeedd, 1.4);
+      dirLight.position.set(5, 8, 4);
+      scene.add(dirLight);
+
+      const rimLight = new THREE.PointLight(0xc084fc, 2.5, 20);
+      rimLight.position.set(-5, 4, -3);
+      scene.add(rimLight);
+
+      // Candle light
+      flameLight = new THREE.PointLight(0xffaa33, 2.8, 10);
+      flameLight.position.set(0, 2.2, 0);
+      scene.add(flameLight);
+
+      // Cake Group
+      cakeGroup = new THREE.Group();
+      scene.add(cakeGroup);
+
+      // Stand
+      const standGeo = new THREE.CylinderGeometry(2.6, 2.8, 0.25, 36);
+      const standMat = new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.85, roughness: 0.2 });
+      const stand = new THREE.Mesh(standGeo, standMat);
+      stand.position.y = -0.9;
+      cakeGroup.add(stand);
+
+      // Cake Tier 1 (Bottom)
+      const tier1Geo = new THREE.CylinderGeometry(2.2, 2.2, 1.1, 40);
+      const tier1Mat = new THREE.MeshStandardMaterial({ color: 0x581c87, roughness: 0.4 });
+      const tier1 = new THREE.Mesh(tier1Geo, tier1Mat);
+      tier1.position.y = -0.3;
+      cakeGroup.add(tier1);
+
+      // Frosting Piping Tier 1
+      const pipingGeo = new THREE.TorusGeometry(2.22, 0.08, 16, 48);
+      const pipingMat = new THREE.MeshStandardMaterial({ color: 0xfbcfe8, roughness: 0.3 });
+      const piping1 = new THREE.Mesh(pipingGeo, pipingMat);
+      piping1.rotation.x = Math.PI / 2;
+      piping1.position.y = 0.25;
+      cakeGroup.add(piping1);
+
+      // Cake Tier 2 (Top)
+      const tier2Geo = new THREE.CylinderGeometry(1.5, 1.5, 0.9, 36);
+      const tier2Mat = new THREE.MeshStandardMaterial({ color: 0xa855f7, roughness: 0.35 });
+      const tier2 = new THREE.Mesh(tier2Geo, tier2Mat);
+      tier2.position.y = 0.7;
+      cakeGroup.add(tier2);
+
+      // Frosting Piping Tier 2
+      const piping2 = new THREE.Mesh(new THREE.TorusGeometry(1.52, 0.07, 16, 36), pipingMat);
+      piping2.rotation.x = Math.PI / 2;
+      piping2.position.y = 1.15;
+      cakeGroup.add(piping2);
+
+      // Golden sprinkles / pearls
+      for (let i = 0; i < 18; i++) {
+        const angle = (i / 18) * Math.PI * 2;
+        const pearl = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08, 12, 12),
+          new THREE.MeshStandardMaterial({ color: 0xffd700, metalness: 0.9, roughness: 0.1 })
+        );
+        pearl.position.set(Math.cos(angle) * 1.35, 1.17, Math.sin(angle) * 1.35);
+        cakeGroup.add(pearl);
+      }
+
+      // Candle
+      const candleGeo = new THREE.CylinderGeometry(0.08, 0.08, 0.8, 16);
+      const candleMat = new THREE.MeshStandardMaterial({ color: 0xffeb99, roughness: 0.2, metalness: 0.1 });
+      const candle = new THREE.Mesh(candleGeo, candleMat);
+      candle.position.y = 1.55;
+      cakeGroup.add(candle);
+
+      // Wick
+      const wickGeo = new THREE.CylinderGeometry(0.015, 0.015, 0.15, 8);
+      const wickMat = new THREE.MeshBasicMaterial({ color: 0x222222 });
+      const wick = new THREE.Mesh(wickGeo, wickMat);
+      wick.position.y = 1.95;
+      cakeGroup.add(wick);
+
+      // Flame Mesh
+      const flameGeo = new THREE.ConeGeometry(0.12, 0.35, 16);
+      const flameMat = new THREE.MeshBasicMaterial({ color: 0xffaa00 });
+      candleFlame = new THREE.Mesh(flameGeo, flameMat);
+      candleFlame.position.y = 2.15;
+      cakeGroup.add(candleFlame);
+
+      // 3D Metallic Balloons floating around
+      const balloonColors = [0xb862f2, 0xff7ebb, 0xffd166, 0x60a5fa, 0xec4899];
+      for (let i = 0; i < 6; i++) {
+        const balloonGroup = new THREE.Group();
+        const bGeo = new THREE.SphereGeometry(0.55, 24, 20);
+        bGeo.scale(1, 1.25, 1);
+        const bMat = new THREE.MeshStandardMaterial({
+          color: balloonColors[i % balloonColors.length],
+          metalness: 0.7,
+          roughness: 0.2
+        });
+        const bMesh = new THREE.Mesh(bGeo, bMat);
+        balloonGroup.add(bMesh);
+
+        // String
+        const lineGeo = new THREE.BufferGeometry().setFromPoints([
+          new THREE.Vector3(0, -0.65, 0),
+          new THREE.Vector3(0.05, -1.8, 0.05)
+        ]);
+        const lineMat = new THREE.LineBasicMaterial({ color: 0xcccccc });
+        const line = new THREE.Line(lineGeo, lineMat);
+        balloonGroup.add(line);
+
+        const angle = (i / 6) * Math.PI * 2;
+        const rad = 2.9 + Math.random() * 0.5;
+        balloonGroup.position.set(Math.cos(angle) * rad, 1.2 + Math.random() * 0.8, Math.sin(angle) * rad);
+        balloonGroup.userData = {
+          baseY: balloonGroup.position.y,
+          speed: 1.2 + Math.random() * 0.8,
+          phase: Math.random() * Math.PI * 2
+        };
+        scene.add(balloonGroup);
+        balloons.push(balloonGroup);
+      }
+
+      // Render Loop
+      let clock = new THREE.Clock();
+      function animateThree() {
+        requestAnimationFrame(animateThree);
+        const time = clock.getElapsedTime();
+
+        if (controls) controls.update();
+
+        // Slow rotation of cake
+        if (cakeGroup) cakeGroup.rotation.y += 0.005;
+
+        // Candle Flame Flicker
+        if (candleFlame && !isCandleBlown) {
+          const flicker = Math.sin(time * 15) * 0.12 + 1;
+          candleFlame.scale.set(flicker, flicker * 1.1, flicker);
+          candleFlame.position.x = Math.sin(time * 18) * 0.015;
+          flameLight.intensity = 2.4 + Math.sin(time * 20) * 0.6;
+        }
+
+        // Float balloons
+        balloons.forEach((b) => {
+          b.position.y = b.userData.baseY + Math.sin(time * b.userData.speed + b.userData.phase) * 0.22;
+          b.rotation.z = Math.sin(time * 0.8 + b.userData.phase) * 0.08;
+        });
+
+        // Smoke particles if candle blown
+        for (let i = smokeParticles.length - 1; i >= 0; i--) {
+          const p = smokeParticles[i];
+          p.position.y += 0.025;
+          p.position.x += p.userData.vx;
+          p.scale.multiplyScalar(1.02);
+          p.material.opacity -= 0.015;
+          if (p.material.opacity <= 0) {
+            scene.remove(p);
+            smokeParticles.splice(i, 1);
+          }
+        }
+
+        renderer.render(scene, camera);
+      }
+      animateThree();
+
+      window.addEventListener('resize', () => {
+        const w = stageContainer.clientWidth;
+        const h = stageContainer.clientHeight;
+        camera.aspect = w / h;
+        camera.updateProjectionMatrix();
+        renderer.setSize(w, h);
+      });
+    }
+
+    // Function to blow out candle
+    function blowOutCandle() {
+      if (isCandleBlown) {
+        // Relight
+        isCandleBlown = false;
+        candleFlame.visible = true;
+        flameLight.intensity = 2.8;
+        document.getElementById('blow-text').textContent = 'Blow Out the Candle!';
+        document.getElementById('blow-icon').textContent = '🌬️';
+        document.getElementById('wish-banner').style.display = 'none';
+        return;
+      }
+
+      isCandleBlown = true;
+      candleFlame.visible = false;
+      flameLight.intensity = 0.2;
+      document.getElementById('blow-text').textContent = '🕯️ Relight Candle';
+      document.getElementById('blow-icon').textContent = '✨';
+      document.getElementById('wish-banner').style.display = 'block';
+
+      // Create smoke puffs in Three.js
+      for (let i = 0; i < 15; i++) {
+        const smoke = new THREE.Mesh(
+          new THREE.SphereGeometry(0.08, 8, 8),
+          new THREE.MeshBasicMaterial({ color: 0xcccccc, transparent: true, opacity: 0.8 })
+        );
+        smoke.position.set(0, 2.05, 0);
+        smoke.userData = { vx: (Math.random() - 0.5) * 0.02 };
+        scene.add(smoke);
+        smokeParticles.push(smoke);
+      }
+
+      // Massive Fireworks & Confetti Blast
+      triggerCelebrationBlast();
+
+      // Ensure audio plays for festive mood
+      if (birthdayAudio.paused) {
+        togglePlayAudio();
+      }
+    }
+
+    document.getElementById('btn-blow-candle').addEventListener('click', blowOutCandle);
+    document.getElementById('btn-fireworks').addEventListener('click', triggerCelebrationBlast);
+
+    initThreeStage();
+
+    /* ==========================================================
+       7. 3D GIFT BOX & LETTER EXPERIENCE
+       ========================================================== */
+    const giftBoxBtn = document.getElementById('gift-box-btn');
+    const giftHintText = document.getElementById('gift-hint-text');
+    const parchmentLetter = document.getElementById('parchment-letter');
+
+    giftBoxBtn.addEventListener('click', () => {
+      const isOpen = giftBoxBtn.classList.contains('is-open');
+      if (!isOpen) {
+        giftBoxBtn.classList.add('is-open');
+        giftHintText.textContent = '✨ Your Birthday Letter is Unfolded ✨';
+        parchmentLetter.style.display = 'block';
+        triggerCelebrationBlast();
+        if (birthdayAudio.paused) {
+          togglePlayAudio();
+        }
+      }
+    });
+
+    /* ==========================================================
+       8. CELEBRATION BLAST & CLICK PARTICLES
+       ========================================================== */
+    function triggerCelebrationBlast() {
+      if (typeof confetti === 'function') {
+        const end = Date.now() + 2500;
+        const colors = ['#ffd700', '#ec4899', '#a855f7', '#60a5fa', '#ffffff'];
+
+        (function frame() {
+          confetti({
+            particleCount: 5,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.7 },
+            colors: colors
+          });
+          confetti({
+            particleCount: 5,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.7 },
+            colors: colors
+          });
+          if (Date.now() < end) {
+            requestAnimationFrame(frame);
+          }
+        }());
+      }
+    }
+
+    document.getElementById('btn-start-celebration').addEventListener('click', () => {
+      triggerCelebrationBlast();
+      if (birthdayAudio.paused) {
+        togglePlayAudio();
+      }
+      document.getElementById('photo-realm').scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('btn-final-blast').addEventListener('click', triggerCelebrationBlast);
+
+    // Interactive Sparkles on Any Screen Click
+    window.addEventListener('click', (e) => {
+      if (e.target.closest('button, a, input')) return;
+      const icons = ['✨', '⭐', '💜', '💖', '🎉'];
+      const chosen = icons[Math.floor(Math.random() * icons.length)];
+      spawnClickParticles(e.clientX, e.clientY, chosen);
+    });
+
+    function spawnClickParticles(x, y, char) {
+      for (let i = 0; i < 4; i++) {
+        const el = document.createElement('span');
+        el.className = 'click-sparkle';
+        el.textContent = char;
+        el.style.left = `${x}px`;
+        el.style.top = `${y}px`;
+        const tx = (Math.random() - 0.5) * 80;
+        const ty = (Math.random() - 0.5) * 80 - 40;
+        el.style.setProperty('--tx', `${tx}px`);
+        el.style.setProperty('--ty', `${ty}px`);
+        document.body.appendChild(el);
+        setTimeout(() => el.remove(), 1000);
       }
     }
   </script>
