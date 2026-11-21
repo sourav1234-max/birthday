@@ -138,6 +138,29 @@
       background: linear-gradient(150deg, rgba(255,255,255,.2), rgba(214,157,255,.05));
       box-shadow: 0 20px 90px rgba(165, 92, 207, .27);
       transform: rotate(2deg);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform .12s ease-out;
+    }
+
+    .hero-photo-wrap::before,
+    .hero-photo-wrap::after {
+      position: absolute;
+      z-index: -1;
+      content: "";
+      border-radius: inherit;
+    }
+
+    .hero-photo-wrap::before {
+      inset: -18px;
+      border: 1px solid rgba(237, 184, 255, .25);
+      transform: translateZ(-35px) rotate(-4deg);
+    }
+
+    .hero-photo-wrap::after {
+      inset: 18% -34px -30px;
+      background: radial-gradient(ellipse, rgba(186, 111, 227, .36), transparent 68%);
+      filter: blur(12px);
     }
 
     .hero-photo {
@@ -303,8 +326,9 @@
     .gallery {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 18px;
+      gap: clamp(14px, 3vw, 28px);
       margin-top: 38px;
+      perspective: 1200px;
     }
 
     .memory {
@@ -315,6 +339,17 @@
       border-radius: 18px;
       background: #291a39;
       box-shadow: 0 12px 36px rgba(0,0,0,.2);
+      transform-style: preserve-3d;
+      will-change: transform;
+      transition: transform .18s ease-out, box-shadow .25s ease;
+    }
+
+    .memory:nth-child(1) { transform: rotateY(7deg) rotateX(-2deg) translateZ(0); }
+    .memory:nth-child(2) { transform: translateY(-12px) translateZ(24px); }
+    .memory:nth-child(3) { transform: rotateY(-7deg) rotateX(-2deg) translateZ(0); }
+
+    .memory.is-tilting {
+      box-shadow: 0 24px 55px rgba(119, 63, 168, .42);
     }
 
     .memory img {
@@ -332,6 +367,38 @@
 
     .memory:first-child img {
       object-position: center 32%;
+    }
+
+    .video-moment {
+      position: relative;
+      width: min(820px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 14px;
+      border: 1px solid rgba(239, 205, 255, .52);
+      border-radius: 30px;
+      background: linear-gradient(145deg, rgba(255,255,255,.15), rgba(173, 104, 214, .08));
+      box-shadow: 0 30px 90px rgba(125, 67, 164, .34);
+      transform: perspective(1100px) rotateX(2deg);
+    }
+
+    .video-moment::before {
+      position: absolute;
+      z-index: -1;
+      inset: 12px -18px -20px;
+      border-radius: 32px;
+      background: linear-gradient(135deg, rgba(205, 137, 245, .24), rgba(92, 46, 128, .12));
+      content: "";
+      filter: blur(18px);
+      transform: translateZ(-40px);
+    }
+
+    .video-moment video {
+      display: block;
+      width: 100%;
+      max-height: 520px;
+      border-radius: 20px;
+      background: #160d20;
+      object-fit: contain;
     }
 
     .closing {
@@ -537,6 +604,17 @@
       </div>
     </section>
 
+    <section class="section" aria-labelledby="video-title">
+      <p class="eyebrow">A moment worth replaying</p>
+      <h2 class="section-heading" id="video-title">Special memory in 3D ✨</h2>
+      <p class="section-intro" style="margin-bottom: 38px;">One more memory from today, moving in full color.</p>
+      <div class="video-moment">
+        <video src="photos/birthday-moment.mp4" controls playsinline preload="metadata"
+               poster="photos/birthday-portrait.jpeg"
+               aria-label="A special birthday memory video"></video>
+      </div>
+    </section>
+
     <section class="closing" aria-labelledby="closing-title">
       <p class="eyebrow">One last thing</p>
       <h2 id="closing-title">Stay magical, Sourav! ✨</h2>
@@ -586,6 +664,36 @@
         });
       }
       releaseHearts();
+    });
+
+    const heroPhoto = document.querySelector(".hero-photo-wrap");
+    if (heroPhoto && window.matchMedia("(pointer: fine)").matches) {
+      heroPhoto.addEventListener("pointermove", (event) => {
+        const rect = heroPhoto.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        heroPhoto.style.transform =
+          `rotate(2deg) rotateY(${x * 10}deg) rotateX(${y * -10}deg) translateZ(12px)`;
+      });
+      heroPhoto.addEventListener("pointerleave", () => {
+        heroPhoto.style.transform = "rotate(2deg)";
+      });
+    }
+
+    document.querySelectorAll(".memory").forEach((card) => {
+      card.addEventListener("pointermove", (event) => {
+        if (!window.matchMedia("(pointer: fine)").matches) return;
+        const rect = card.getBoundingClientRect();
+        const x = (event.clientX - rect.left) / rect.width - 0.5;
+        const y = (event.clientY - rect.top) / rect.height - 0.5;
+        card.classList.add("is-tilting");
+        card.style.transform =
+          `rotateY(${x * 16}deg) rotateX(${y * -16}deg) translateZ(28px)`;
+      });
+      card.addEventListener("pointerleave", () => {
+        card.classList.remove("is-tilting");
+        card.style.transform = "";
+      });
     });
 
     function releaseHearts() {
